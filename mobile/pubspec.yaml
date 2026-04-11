@@ -50,6 +50,7 @@ dependencies:
   shimmer: ^3.0.0
   percent_indicator: ^4.2.3
   smooth_page_indicator: ^1.2.0+3
+  flutter_animate: ^4.5.0
 
   # Timezone (required for local notifications)
   timezone: ^0.9.4

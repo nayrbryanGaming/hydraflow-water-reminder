@@ -34,13 +34,51 @@ class SettingsScreen extends ConsumerWidget {
             onTap: () {},
           ),
           const Divider(),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Text('Danger Zone', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold)),
+          ),
           ListTile(
-            leading: const Icon(Icons.logout, color: Colors.red),
-            title: const Text('Logout', style: TextStyle(color: Colors.red)),
+            leading: const Icon(Icons.person_remove_outlined, color: Colors.red),
+            title: const Text('Delete Account', style: TextStyle(color: Colors.red)),
+            onTap: () => _showDeleteConfirmation(context, ref),
+          ),
+          ListTile(
+            leading: const Icon(Icons.logout, color: Colors.grey),
+            title: const Text('Logout'),
             onTap: () async {
               await ref.read(authServiceProvider).signOut();
               if (context.mounted) context.go(routeLogin);
             },
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showDeleteConfirmation(BuildContext context, WidgetRef ref) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Delete Account?'),
+        content: const Text('This action is permanent and will erase all your hydration data. This cannot be undone.'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+          TextButton(
+            onPressed: () async {
+              try {
+                await ref.read(authServiceProvider).deleteUserAccount();
+                if (context.mounted) context.go(routeLogin);
+              } catch (e) {
+                if (context.mounted) {
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Error deleting account: $e'), backgroundColor: Colors.red),
+                  );
+                }
+              }
+            },
+            child: const Text('Delete Permanently', style: TextStyle(color: Colors.red)),
           ),
         ],
       ),

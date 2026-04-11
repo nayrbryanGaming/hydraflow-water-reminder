@@ -62,4 +62,19 @@ class AuthService {
   Future<void> signOut() async {
     await _auth.signOut();
   }
+
+  Future<void> deleteUserAccount() async {
+    final user = _auth.currentUser;
+    if (user != null) {
+      // 1. Delete Firestore user document and subcollections
+      // In production, you might use a Cloud Function for recursive deletion
+      await _firestore
+          .collection(FirestoreConstants.users)
+          .doc(user.uid)
+          .delete();
+      
+      // 2. Delete the Auth account
+      await user.delete();
+    }
+  }
 }

@@ -14,17 +14,21 @@ HydraFlow ("we", "our", or "us") is committed to protecting your privacy. This P
 - To send you push notifications based on your chosen intervals.
 - To improve our app through anonymized analytics (Firebase Analytics).
 
-## 3. Data Storage & Security
-We use Google's Firebase platform (Firestore) to store your data securely in the cloud. Data is encrypted in transit and at rest.
+## 3. Data Retention and Deletion
+- **Retention**: We retain your data as long as your account is active.
+- **Deletion (Right to Erasure)**: You have the right to delete your account and all associated data at any time via the "Delete Account" button in the Settings menu. Upon deletion, your personal data is permanently removed from our production servers within 30 days.
 
-## 4. Third-Party Services
-We may utilize third-party services like Firebase, which have their own privacy policies. We do not sell your personal data to advertisers.
+## 4. Children's Privacy
+HydraFlow is not intended for children under 13. We do not knowingly collect information from children under 13. If we discover such data, we delete it immediately.
 
-## 5. Your Rights
+## 5. Security
+We use industry-standard encryption (AES-256) via Google Firebase to protect your data. However, no method of transmission over the internet is 100% secure.
+
+## 6. Your Rights
 You have the right to:
-- Access your data completely within the app.
-- Request deletion of your account and all associated data.
-- Opt out of push notifications at any time via device settings.
+- Access your data within the app.
+- Rectify any inaccurate data.
+- Withdraw consent for notifications at any time.
 
-## 6. Contact Us
+## 7. Contact Us
 For privacy-related inquiries, please contact us at support@hydraflow.app.
