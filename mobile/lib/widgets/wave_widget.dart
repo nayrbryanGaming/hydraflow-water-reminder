@@ -67,21 +67,80 @@ class _WavePainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
+    if (progress <= 0) return;
+
+    final yOffset = size.height * (1 - progress);
+    final amplitude = size.height * 0.04 * (progress > 0 && progress < 1 ? 1 : 0.4);
+
+    // Layer 1: Back Wave (Lighter, faster)
+    _drawWave(
+      canvas, 
+      size, 
+      yOffset + 4, 
+      amplitude * 0.8, 
+      color.withOpacity(0.3), 
+      waveValue * 1.5, 
+      reverse: true,
+    );
+
+    // Layer 2: Middle Wave (Moderate)
+    _drawWave(
+      canvas, 
+      size, 
+      yOffset + 2, 
+      amplitude * 1.2, 
+      color.withOpacity(0.6), 
+      waveValue, 
+      reverse: false,
+    );
+
+    // Layer 3: Front Wave (Main color, slow)
+    _drawWave(
+      canvas, 
+      size, 
+      yOffset, 
+      amplitude, 
+      color, 
+      waveValue * 0.7, 
+      reverse: false,
+    );
+    
+    // Shine effect on top
+    if (progress > 0.1) {
+      final shinePaint = Paint()
+        ..shader = LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Colors.white.withOpacity(0.1),
+            Colors.transparent,
+          ],
+        ).createShader(Rect.fromLTWH(0, yOffset - 10, size.width, 20));
+      
+      canvas.drawRect(Rect.fromLTWH(0, yOffset - 10, size.width, 10), shinePaint);
+    }
+  }
+
+  void _drawWave(
+    Canvas canvas, 
+    Size size, 
+    double yOffset, 
+    double amplitude, 
+    Color color, 
+    double phase, 
+    {required bool reverse}
+  ) {
     final paint = Paint()
       ..color = color
       ..style = PaintingStyle.fill;
 
     final path = Path();
-    final yOffset = size.height * (1 - progress);
-    
-    // Smooth transition for wave height
-    final amplitude = size.height * 0.05 * (progress > 0 && progress < 1 ? 1 : 0.2);
-    
     path.moveTo(0, yOffset);
-    
+
     for (double x = 0; x <= size.width; x++) {
+      final phaseShift = reverse ? -phase : phase;
       final y = yOffset +
-          math.sin((x / size.width * 2 * math.pi) + (waveValue * 2 * math.pi)) *
+          math.sin((x / size.width * 2 * math.pi) + (phaseShift * 2 * math.pi)) *
               amplitude;
       path.lineTo(x, y);
     }
@@ -91,26 +150,6 @@ class _WavePainter extends CustomPainter {
     path.close();
 
     canvas.drawPath(path, paint);
-    
-    // Optional: Draw a second, lighter wave for depth
-    final path2 = Path();
-    final yOffset2 = yOffset + 5;
-    final paint2 = Paint()
-      ..color = color.withOpacity(0.5)
-      ..style = PaintingStyle.fill;
-
-    path2.moveTo(0, yOffset2);
-    for (double x = 0; x <= size.width; x++) {
-      final y = yOffset2 +
-          math.sin((x / size.width * 2 * math.pi) - (waveValue * 2 * math.pi) + math.pi) *
-              amplitude;
-      path2.lineTo(x, y);
-    }
-    path2.lineTo(size.width, size.height);
-    path2.lineTo(0, size.height);
-    path2.close();
-    
-    canvas.drawPath(path2, paint2);
   }
 
   @override

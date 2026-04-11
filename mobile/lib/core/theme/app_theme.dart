@@ -123,34 +123,38 @@ class AppTheme {
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.dark,
-      colorScheme: const ColorScheme.dark(
-        primary: AppColors.primaryBlue,
-        secondary: AppColors.secondaryAqua,
-        tertiary: AppColors.accentMint,
-        surface: Color(0xFF0F1923),
-        onPrimary: Colors.white,
-        onSecondary: Colors.white,
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: AppColors.primaryBlue,
+        brightness: Brightness.dark,
+        surface: const Color(0xFF0F172A),
         onSurface: Colors.white,
-        error: Color(0xFFEB5757),
+      ).copyWith(
+        surfaceContainer: const Color(0xFF1E293B),
+        secondary: AppColors.secondaryAqua.withOpacity(0.8),
+        tertiary: AppColors.accentMint.withOpacity(0.8),
       ),
-      scaffoldBackgroundColor: const Color(0xFF0A1628),
+      scaffoldBackgroundColor: AppColors.backgroundDeepSea,
       textTheme: _buildTextTheme(Colors.white),
       appBarTheme: AppBarTheme(
-        backgroundColor: const Color(0xFF0A1628),
+        backgroundColor: Colors.transparent,
         foregroundColor: Colors.white,
         elevation: 0,
         scrolledUnderElevation: 0,
         titleTextStyle: GoogleFonts.outfit(
-          fontSize: 20,
-          fontWeight: FontWeight.w600,
+          fontSize: 24,
+          fontWeight: FontWeight.w700,
           color: Colors.white,
+          letterSpacing: -0.5,
         ),
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
       cardTheme: CardTheme(
-        color: const Color(0xFF132136),
+        color: AppColors.backgroundCardDark,
         elevation: 0,
+        margin: EdgeInsets.zero,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(30),
+          side: BorderSide(color: Colors.white.withOpacity(0.08), width: 1.5),
         ),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(

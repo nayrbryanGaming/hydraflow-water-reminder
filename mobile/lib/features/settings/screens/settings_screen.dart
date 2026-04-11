@@ -19,9 +19,21 @@ class SettingsScreen extends ConsumerWidget {
             onTap: () {},
           ),
           ListTile(
-            leading: const Icon(Icons.notifications),
+            leading: const Icon(Icons.notifications_active_outlined),
             title: const Text('Reminders'),
             onTap: () => context.push(routeReminders),
+          ),
+          ListTile(
+            leading: const Icon(Icons.straighten_outlined),
+            title: const Text('Units'),
+            trailing: SegmentedButton<bool>(
+              segments: const [
+                ButtonSegment(value: true, label: Text('ml')),
+                ButtonSegment(value: false, label: Text('oz')),
+              ],
+              selected: {ref.watch(unitPreferenceProvider)},
+              onSelectionChanged: (set) => ref.read(unitPreferenceProvider.notifier).state = set.first,
+            ),
           ),
           ListTile(
             leading: const Icon(Icons.tune),

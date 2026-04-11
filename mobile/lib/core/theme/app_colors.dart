@@ -10,9 +10,17 @@ class AppColors {
 
   // ─── Background ────────────────────────────────────────────────────
   static const Color backgroundWhite = Color(0xFFF9FBFF);
+  static const Color backgroundOcean = Color(0xFFE3F2FD);
   static const Color backgroundCard = Color(0xFFFFFFFF);
   static const Color backgroundDark = Color(0xFF0A1628);
   static const Color backgroundCardDark = Color(0xFF132136);
+  static const Color backgroundDeepSea = Color(0xFF05101E);
+
+  // ─── Glassmorphism ────────────────────────────────────────────────
+  static Color glassWhite = Colors.white.withOpacity(0.08);
+  static Color glassWhiteHeavy = Colors.white.withOpacity(0.25);
+  static Color glassDark = const Color(0xFF0A1628).withOpacity(0.4);
+  static Color glassBorder = Colors.white.withOpacity(0.2);
 
   // ─── Text ──────────────────────────────────────────────────────────
   static const Color textPrimary = Color(0xFF1A2B4A);
@@ -62,4 +70,6 @@ class AppColors {
 
   // ─── Shadow ────────────────────────────────────────────────────────
   static const Color shadow = Color(0xFF2F80ED);
+  static Color shadowHeavy = const Color(0xFF000000).withOpacity(0.12);
+  static Color shadowGlow = const Color(0xFF2F80ED).withOpacity(0.4);
 }

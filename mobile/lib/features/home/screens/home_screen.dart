@@ -33,11 +33,14 @@ class HomeScreen extends ConsumerWidget {
         ],
       ),
       body: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Color(0xFFE0F2FE), Colors.white],
+            colors: [
+              isDark ? AppColors.backgroundDeepSea : const Color(0xFFE0F2FE),
+              isDark ? AppColors.backgroundDark : Colors.white,
+            ],
           ),
         ),
         child: profileAsync.when(
@@ -56,118 +59,23 @@ class HomeScreen extends ConsumerWidget {
                 final status = HydrationCalculator.getStatus(percent);
 
                 return SafeArea(
-                  child: ListView(
+                  child: SingleChildScrollView(
                     padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                    children: [
-                      Text(
-                        'Hello, ${profile.displayName} 👋',
-                        style: GoogleFonts.outfit(fontSize: 28, fontWeight: FontWeight.bold),
-                      ).animate().fadeIn(duration: 600.ms).slideX(begin: -0.1),
-                      const SizedBox(height: 8),
-                      Text(
-                        HydrationCalculator.getMotivationalMessage(status),
-                        style: TextStyle(color: AppColors.textSecondary, fontSize: 16),
-                      ).animate().fadeIn(delay: 200.ms),
-                      const SizedBox(height: 40),
-                      Center(
-                        child: GlassCard(
-                          blur: 20,
-                          color: Colors.white.withOpacity(0.4),
-                          child: CircularPercentIndicator(
-                            radius: 130.0,
-                            lineWidth: 18.0,
-                            percent: percent,
-                            center: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const Icon(Icons.water_drop, color: AppColors.primaryBlue, size: 48)
-                                    .animate(onPlay: (controller) => controller.repeat(reverse: true))
-                                    .scale(duration: 1.seconds, begin: const Offset(1, 1), end: const Offset(1.1, 1.1)),
-                                const SizedBox(height: 8),
-                                Text(
-                                  HydrationCalculator.formatMl(consumedMl),
-                                  style: GoogleFonts.outfit(fontSize: 40, fontWeight: FontWeight.bold),
-                                ),
-                                Text(
-                                  'of ${HydrationCalculator.formatMl(goalMl)}',
-                                  style: TextStyle(color: AppColors.textSecondary, fontSize: 18),
-                                ),
-                              ],
-                            ),
-                            progressColor: AppColors.primaryBlue,
-                            backgroundColor: Colors.white.withOpacity(0.5),
-                            circularStrokeCap: CircularStrokeCap.round,
-                            animation: true,
-                            animationDuration: 1500,
-                            curve: Curves.easeOutCirc,
-                          ),
-                        ).animate().scale(delay: 400.ms, curve: Curves.backOut),
-                      ),
-                      const SizedBox(height: 40),
-                      ElevatedButton.icon(
-                        onPressed: () => context.push('$routeHome/log-water'),
-                        icon: const Icon(Icons.add_rounded, size: 28),
-                        label: const Text('LOG WATER'),
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 20),
-                          backgroundColor: AppColors.primaryBlue,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-                        ),
-                      ).animate().fadeIn(delay: 600.ms).slideY(begin: 0.2),
-                      const SizedBox(height: 48),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text('Recent Activity', style: GoogleFonts.outfit(fontSize: 20, fontWeight: FontWeight.bold)),
-                          TextButton(onPressed: () {}, child: const Text('View All')),
-                        ],
-                      ).animate().fadeIn(delay: 800.ms),
-                      const SizedBox(height: 16),
-                      logs.isEmpty
-                          ? _buildEmptyState()
-                          : ListView.separated(
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              itemCount: logs.length.clamp(0, 5),
-                              separatorBuilder: (_, __) => const SizedBox(height: 12),
-                              itemBuilder: (context, index) {
-                                final log = logs[index];
-                                return GlassCard(
-                                  padding: const EdgeInsets.all(16),
-                                  borderRadius: 20,
-                                  child: Row(
-                                    children: [
-                                      Container(
-                                        padding: const EdgeInsets.all(12),
-                                        decoration: BoxDecoration(
-                                          color: AppColors.primaryBlue.withOpacity(0.1),
-                                          borderRadius: BorderRadius.circular(16),
-                                        ),
-                                        child: Text(log.drinkType.emoji, style: const TextStyle(fontSize: 24)),
-                                      ),
-                                      const SizedBox(width: 16),
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              '${log.amountMl}ml ${log.drinkType.label}',
-                                              style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 16),
-                                            ),
-                                            Text(
-                                              '${log.timestamp.hour}:${log.timestamp.minute.toString().padLeft(2, '0')}',
-                                              style: TextStyle(color: AppColors.textSecondary, fontSize: 13),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      const Icon(Icons.chevron_right, color: AppColors.textHint),
-                                    ],
-                                  ),
-                                ).animate().fadeIn(delay: (800 + (index * 100)).ms).slideX(begin: 0.1);
-                              },
-                            ),
-                    ],
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildHeader(profile),
+                        const SizedBox(height: 32),
+                        _buildMainLiquidGlass(context, percent, consumedMl, goalMl),
+                        const SizedBox(height: 32),
+                        _buildBentoGrid(context, profile, consumedMl, percent),
+                        const SizedBox(height: 32),
+                        _buildQuickAddButton(context),
+                        const SizedBox(height: 32),
+                        _buildRecentActivity(logs),
+                        const SizedBox(height: 100), // Padding for FAB
+                      ],
+                    ),
                   ),
                 );
               },
@@ -175,6 +83,227 @@ class HomeScreen extends ConsumerWidget {
           },
         ),
       ),
+    );
+  }
+
+  Widget _buildHeader(profile) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Hello, ${profile.displayName} 👋',
+          style: GoogleFonts.outfit(fontSize: 28, fontWeight: FontWeight.bold),
+        ).animate().fadeIn(duration: 600.ms).slideX(begin: -0.1),
+        const SizedBox(height: 4),
+        Text(
+          'Time to hydrate your body',
+          style: TextStyle(color: AppColors.textSecondary, fontSize: 16),
+        ).animate().fadeIn(delay: 200.ms),
+      ],
+    );
+  }
+
+  Widget _buildMainLiquidGlass(BuildContext context, double percent, int consumed, int goal) {
+    return Center(
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          // Outer Glow
+          Container(
+            width: 240,
+            height: 240,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.primaryBlue.withOpacity(0.2),
+                  blurRadius: 40,
+                  spreadRadius: 10,
+                ),
+              ],
+            ),
+          ),
+          // Transparent Glass Container
+          Container(
+            width: 220,
+            height: 220,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(color: Colors.white.withOpacity(0.2), width: 2),
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  Colors.white.withOpacity(0.1),
+                  Colors.white.withOpacity(0.05),
+                ],
+              ),
+            ),
+            child: ClipOval(
+              child: WaveWidget(
+                progress: percent,
+                color: AppColors.primaryBlue,
+                size: 220,
+              ),
+            ),
+          ),
+          // Progress Info
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                '${(percent * 100).toInt()}%',
+                style: GoogleFonts.outfit(fontSize: 48, fontWeight: FontWeight.bold),
+              ),
+              Text(
+                '${consumed} / ${goal}ml',
+                style: GoogleFonts.outfit(fontSize: 16, color: Colors.white.withOpacity(0.8)),
+              ),
+            ],
+          ),
+        ],
+      ).animate().scale(duration: 800.ms, curve: Curves.backOut),
+    );
+  }
+
+  Widget _buildBentoGrid(BuildContext context, profile, int consumed, double percent) {
+    return IntrinsicHeight(
+      child: Row(
+        children: [
+          // Left Bento: Streak
+          Expanded(
+            child: GlassCard(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Icon(Icons.local_fire_department_rounded, color: Colors.orange, size: 32),
+                  const Spacer(),
+                  Text('Streak', style: GoogleFonts.outfit(color: AppColors.textSecondary)),
+                  Text('7 Days', style: GoogleFonts.outfit(fontSize: 22, fontWeight: FontWeight.bold)),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(width: 16),
+          // Right Bento: Reminders & Progress
+          Expanded(
+            child: Column(
+              children: [
+                GlassCard(
+                  padding: const EdgeInsets.all(16),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.notifications_active_rounded, color: AppColors.secondaryAqua, size: 24),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Next', style: GoogleFonts.outfit(fontSize: 12, color: AppColors.textSecondary)),
+                            Text('in 45m', style: GoogleFonts.outfit(fontSize: 16, fontWeight: FontWeight.bold)),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 16),
+                GlassCard(
+                  padding: const EdgeInsets.all(16),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.star_rounded, color: Colors.amber, size: 24),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Status', style: GoogleFonts.outfit(fontSize: 12, color: AppColors.textSecondary)),
+                            Text(percent < 1.0 ? 'Hydrating' : 'Great Job!', style: GoogleFonts.outfit(fontSize: 14, fontWeight: FontWeight.bold)),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    ).animate().slideY(begin: 0.2, delay: 400.ms).fadeIn(delay: 400.ms);
+  }
+
+  Widget _buildQuickAddButton(BuildContext context) {
+    return ElevatedButton(
+      onPressed: () => context.push('$routeHome/log-water'),
+      style: ElevatedButton.styleFrom(
+        padding: const EdgeInsets.symmetric(vertical: 20),
+        backgroundColor: AppColors.primaryBlue,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(Icons.add_rounded, size: 28),
+          const SizedBox(width: 12),
+          Text('DRINK WATER', style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.bold)),
+        ],
+      ),
+    ).animate().fadeIn(delay: 600.ms).slideY(begin: 0.1);
+  }
+
+  Widget _buildRecentActivity(List<HydrationLog> logs) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text('Daily History', style: GoogleFonts.outfit(fontSize: 20, fontWeight: FontWeight.bold)),
+            TextButton(onPressed: () {}, child: const Text('View All')),
+          ],
+        ),
+        const SizedBox(height: 12),
+        logs.isEmpty
+            ? _buildEmptyState()
+            : ListView.separated(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: logs.length.clamp(0, 3),
+                separatorBuilder: (_, __) => const SizedBox(height: 12),
+                itemBuilder: (context, index) {
+                  final log = logs[index];
+                  return GlassCard(
+                    padding: const EdgeInsets.all(16),
+                    child: Row(
+                      children: [
+                        Text(log.drinkType.emoji, style: const TextStyle(fontSize: 24)),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                '${log.amountMl}ml ${log.drinkType.label}',
+                                style: GoogleFonts.outfit(fontWeight: FontWeight.bold),
+                              ),
+                              Text(
+                                '${log.timestamp.hour}:${log.timestamp.minute.toString().padLeft(2, '0')}',
+                                style: TextStyle(color: AppColors.textSecondary, fontSize: 12),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ).animate().fadeIn(delay: (700 + (index * 100)).ms).slideX(begin: 0.1);
+                },
+              ),
+      ],
+    );
+  }
     );
   }
 

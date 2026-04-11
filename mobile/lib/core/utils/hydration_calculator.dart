@@ -31,7 +31,11 @@ class HydrationCalculator {
   }
 
   /// Format ml value for display (e.g., 1500 → "1.5L", 500 → "500ml")
-  static String formatMl(int ml) {
+  static String formatMl(int ml, {bool isMetric = true}) {
+    if (!isMetric) {
+      final oz = (ml / 29.5735).toStringAsFixed(1);
+      return '${oz}oz';
+    }
     if (ml >= 1000) {
       final liters = ml / 1000;
       return '${liters.toStringAsFixed(liters.truncateToDouble() == liters ? 0 : 1)}L';

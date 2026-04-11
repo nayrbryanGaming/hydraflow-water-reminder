@@ -32,6 +32,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       'body': 'View comprehensive analytics and earn badges for your hydration streaks.',
       'icon': '🏆'
     },
+    {
+      'title': 'Privacy First',
+      'body': 'We only use your data to calculate your needs. We\'ll ask for notification access next to keep you on track.',
+      'icon': '🛡️'
+    },
   ];
 
   @override
@@ -54,9 +59,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(
-                          _pages[index]['icon']!,
-                          style: const TextStyle(fontSize: 100),
+                        SizedBox(
+                          height: 240,
+                          child: Lottie.asset(
+                            'assets/animations/onboarding_${index + 1}.json',
+                            fit: BoxFit.contain,
+                            errorBuilder: (context, error, stackTrace) => Text(
+                              _pages[index]['icon']!,
+                              style: const TextStyle(fontSize: 100),
+                            ),
+                          ),
                         ),
                         const SizedBox(height: 48),
                         Text(
