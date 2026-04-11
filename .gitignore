@@ -1,0 +1,68 @@
+# ========================
+# Flutter / Dart
+# ========================
+mobile/.dart_tool/
+mobile/.flutter-plugins
+mobile/.flutter-plugins-dependencies
+mobile/.packages
+mobile/.pub-cache/
+mobile/.pub/
+mobile/build/
+mobile/coverage/
+mobile/doc/api/
+mobile/android/.gradle
+mobile/android/captures/
+mobile/android/gradlew
+mobile/android/gradlew.bat
+mobile/android/local.properties
+mobile/android/GeneratedPluginRegistrant.java
+mobile/android/key.properties
+mobile/android/app/google-services.json
+mobile/ios/Flutter/.last_build_id
+mobile/ios/Pods/
+mobile/ios/.symlinks/
+mobile/ios/Runner.xcworkspace/
+mobile/ios/Flutter/Generated.xcconfig
+mobile/ios/Flutter/flutter_export_environment.sh
+mobile/lib/firebase_options.dart
+*.iml
+
+# ========================
+# Node / Firebase Functions
+# ========================
+backend/functions/node_modules/
+backend/functions/.env
+backend/.firebaserc.local
+backend/firebase-debug.log
+
+# ========================
+# Next.js Landing Page
+# ========================
+landing-page/.next/
+landing-page/node_modules/
+landing-page/.env.local
+landing-page/.env*.local
+landing-page/out/
+landing-page/.vercel
+
+# ========================
+# IDE & OS
+# ========================
+.idea/
+.vscode/
+*.log
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.env
+.env.local
+*.pem
+*.key
+
+# ========================
+# Secrets / Keys
+# ========================
+**/google-services.json
+**/GoogleService-Info.plist
+**/serviceAccountKey.json
