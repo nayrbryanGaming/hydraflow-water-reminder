@@ -1,4 +1,7 @@
+import 'dart:io';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import '../core/constants/app_constants.dart';
 
@@ -11,24 +14,32 @@ class NotificationService {
   Future<void> initialize(FlutterLocalNotificationsPlugin plugin) async {
     _notificationsPlugin = plugin;
 
-    const androidInitialize = AndroidInitializationSettings('@mipmap/ic_launcher');
-    const darwinInitialize = DarwinInitializationSettings(
+    const androidSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
+    const iosSettings = DarwinInitializationSettings(
       requestAlertPermission: true,
       requestBadgePermission: true,
       requestSoundPermission: true,
     );
-    
-    const initializationSettings = InitializationSettings(
-      android: androidInitialize,
-      iOS: darwinInitialize,
+
+    const initSettings = InitializationSettings(
+      android: androidSettings,
+      iOS: iosSettings,
     );
 
     await _notificationsPlugin.initialize(
-      initializationSettings,
+      initSettings,
       onDidReceiveNotificationResponse: (details) {
-        // Handle notification tap
+        // Handle notification tap logic here
       },
     );
+
+    // Request exact alarm permission for Android 14+
+    if (Platform.isAndroid) {
+      final status = await Permission.scheduleExactAlarm.status;
+      if (status.isDenied) {
+        await Permission.scheduleExactAlarm.request();
+      }
+    }
   }
 
   Future<void> requestPermissions() async {
