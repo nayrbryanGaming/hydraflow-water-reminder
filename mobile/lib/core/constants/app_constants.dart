@@ -60,3 +60,4 @@ class AppConstants {
   static const String eventReminderToggled = 'reminder_toggled';
   static const String eventOnboardingCompleted = 'onboarding_completed';
 }
+

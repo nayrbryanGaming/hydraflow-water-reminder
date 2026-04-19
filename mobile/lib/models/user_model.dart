@@ -12,6 +12,10 @@ class UserModel {
   final DateTime createdAt;
   final DateTime updatedAt;
   final String? fcmToken;
+  final int age;
+  final String hydrationObjective;
+  final String activityLevel;
+  final bool isHotClimate;
 
   const UserModel({
     required this.userId,
@@ -24,6 +28,10 @@ class UserModel {
     required this.createdAt,
     required this.updatedAt,
     this.fcmToken,
+    required this.age,
+    required this.hydrationObjective,
+    required this.activityLevel,
+    required this.isHotClimate,
   });
 
   factory UserModel.fromFirestore(DocumentSnapshot doc) {
@@ -41,6 +49,10 @@ class UserModel {
       updatedAt: (data[FirestoreConstants.updatedAt] as Timestamp?)?.toDate() ??
           DateTime.now(),
       fcmToken: data[FirestoreConstants.fcmToken] as String?,
+      age: data[FirestoreConstants.age] as int? ?? 25,
+      hydrationObjective: data[FirestoreConstants.hydrationObjective] as String? ?? 'general',
+      activityLevel: data[FirestoreConstants.activityLevel] as String? ?? 'moderate',
+      isHotClimate: data[FirestoreConstants.climate] as bool? ?? false,
     );
   }
 
@@ -56,6 +68,10 @@ class UserModel {
       FirestoreConstants.createdAt: Timestamp.fromDate(createdAt),
       FirestoreConstants.updatedAt: Timestamp.fromDate(updatedAt),
       FirestoreConstants.fcmToken: fcmToken,
+      FirestoreConstants.age: age,
+      FirestoreConstants.hydrationObjective: hydrationObjective,
+      FirestoreConstants.activityLevel: activityLevel,
+      FirestoreConstants.climate: isHotClimate,
     };
   }
 
@@ -70,6 +86,10 @@ class UserModel {
     DateTime? createdAt,
     DateTime? updatedAt,
     String? fcmToken,
+    int? age,
+    String? hydrationObjective,
+    String? activityLevel,
+    bool? isHotClimate,
   }) {
     return UserModel(
       userId: userId ?? this.userId,
@@ -82,6 +102,10 @@ class UserModel {
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       fcmToken: fcmToken ?? this.fcmToken,
+      age: age ?? this.age,
+      hydrationObjective: hydrationObjective ?? this.hydrationObjective,
+      activityLevel: activityLevel ?? this.activityLevel,
+      isHotClimate: isHotClimate ?? this.isHotClimate,
     );
   }
 
@@ -95,3 +119,4 @@ class UserModel {
   @override
   int get hashCode => userId.hashCode;
 }
+

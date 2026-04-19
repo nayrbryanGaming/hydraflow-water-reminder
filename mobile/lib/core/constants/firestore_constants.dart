@@ -18,6 +18,10 @@ class FirestoreConstants {
   static const String createdAt = 'created_at';
   static const String updatedAt = 'updated_at';
   static const String fcmToken = 'fcm_token';
+  static const String age = 'age';
+  static const String hydrationObjective = 'hydration_objective';
+  static const String activityLevel = 'activity_level';
+  static const String climate = 'climate';
 
   // Hydration log fields
   static const String logId = 'log_id';
@@ -43,3 +47,4 @@ class FirestoreConstants {
   static const String milestones = 'milestones';
   static const String unlockedAt = 'unlocked_at';
 }
+

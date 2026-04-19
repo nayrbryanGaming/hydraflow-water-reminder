@@ -17,6 +17,11 @@ final dailyHydrationProvider = StreamProvider.family<List<HydrationLog>, DateTim
   return service.getDailyHydrationLogs(date);
 });
 
+final userStatsProvider = StreamProvider((ref) {
+  final service = ref.watch(firestoreServiceProvider);
+  return service.getUserStats();
+});
+
 class FirestoreService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final AuthService _authService;
@@ -42,7 +47,7 @@ class FirestoreService {
     await logRef.set(logWithUser.toFirestore());
     
     // Also trigger update stats
-    await _updateUserStats(log.amountMl);
+    await _updateUserStats(log.amountMl, logTimestamp: log.timestamp);
   }
 
   Stream<List<HydrationLog>> getDailyHydrationLogs(DateTime date) {
@@ -55,6 +60,21 @@ class FirestoreService {
         .collection(FirestoreConstants.hydrationLogs)
         .where(FirestoreConstants.timestamp, isGreaterThanOrEqualTo: Timestamp.fromDate(startOfDay))
         .where(FirestoreConstants.timestamp, isLessThanOrEqualTo: Timestamp.fromDate(endOfDay))
+        .orderBy(FirestoreConstants.timestamp, descending: true)
+        .snapshots()
+        .map((snapshot) =>
+            snapshot.docs.map((doc) => HydrationLog.fromFirestore(doc)).toList());
+  }
+
+  Stream<List<HydrationLog>> getDailyLogs(DateTime date) {
+    return getDailyHydrationLogs(date);
+  }
+
+  Stream<List<HydrationLog>> getAllHydrationLogs() {
+    return _firestore
+        .collection(FirestoreConstants.users)
+        .doc(_uid)
+        .collection(FirestoreConstants.hydrationLogs)
         .orderBy(FirestoreConstants.timestamp, descending: true)
         .snapshots()
         .map((snapshot) =>
@@ -78,6 +98,13 @@ class FirestoreService {
         .update({FirestoreConstants.dailyWaterGoalMl: newGoalMl});
   }
 
+  Future<void> updateUserProfile(UserModel updatedUser) async {
+    await _firestore
+        .collection(FirestoreConstants.users)
+        .doc(_uid)
+        .update(updatedUser.toFirestore());
+  }
+
   // --- Reminders ---
 
   Future<void> updateReminders(ReminderModel reminder) async {
@@ -91,24 +118,91 @@ class FirestoreService {
 
   // --- Achievements & Stats ---
 
-  Future<void> _updateUserStats(int amountAddedMl) async {
-     // Transactional update would be better here for production
-     final docRef = _firestore.collection(FirestoreConstants.users).doc(_uid).collection(FirestoreConstants.achievements).doc('stats');
-     
-     return _firestore.runTransaction((transaction) async {
-       final doc = await transaction.get(docRef);
-       if (!doc.exists) {
-         final initialAchievement = AchievementModel(
-           userId: _uid,
-           totalWaterMl: amountAddedMl,
-         );
-         transaction.set(docRef, initialAchievement.toFirestore());
-       } else {
-         final currentData = AchievementModel.fromFirestore(doc);
-         transaction.update(docRef, {
-           FirestoreConstants.totalWaterMl: currentData.totalWaterMl + amountAddedMl,
-         });
-       }
-     });
+  Future<void> _updateUserStats(int amountAddedMl, {DateTime? logTimestamp}) async {
+    final userDocRef = _firestore.collection(FirestoreConstants.users).doc(_uid);
+    final statsDocRef = userDocRef.collection(FirestoreConstants.achievements).doc('stats');
+    
+    final operationDate = logTimestamp ?? DateTime.now();
+    final String targetDateKey = _getDateKey(operationDate);
+
+    return _firestore.runTransaction((transaction) async {
+      final userDoc = await transaction.get(userDocRef);
+      if (!userDoc.exists) return;
+
+      final userData = userDoc.data()!;
+      final dailyGoal = userData[FirestoreConstants.dailyWaterGoalMl] as int? ?? 2000;
+
+      // Get current stats
+      final statsDoc = await transaction.get(statsDocRef);
+      AchievementModel currentStats;
+      
+      if (!statsDoc.exists) {
+        currentStats = AchievementModel(userId: _uid);
+      } else {
+        currentStats = AchievementModel.fromFirestore(statsDoc);
+      }
+
+      // Calculate total for the specific target date
+      final logsSnapshot = await userDocRef.collection(FirestoreConstants.hydrationLogs)
+          .where(FirestoreConstants.timestamp, isGreaterThanOrEqualTo: Timestamp.fromDate(DateTime(operationDate.year, operationDate.month, operationDate.day)))
+          .where(FirestoreConstants.timestamp, isLessThan: Timestamp.fromDate(DateTime(operationDate.year, operationDate.month, operationDate.day).add(const Duration(days: 1))))
+          .get();
+      
+      int dayTotal = 0;
+      for (var doc in logsSnapshot.docs) {
+        dayTotal += (doc.data()[FirestoreConstants.amountMl] as int? ?? 0);
+      }
+
+      int newStreak = currentStats.streakDays;
+      int newLongestStreak = currentStats.longestStreak;
+      int newTotalGoals = currentStats.totalGoalsCompleted;
+      DateTime? newUnlockedAt = currentStats.unlockedAt;
+
+      // Check if crossing the goal for the first time on THIS target date
+      if (dayTotal >= dailyGoal && (dayTotal - amountAddedMl) < dailyGoal) {
+        newTotalGoals++;
+        
+        final yesterdayKey = _getDateKey(operationDate.subtract(const Duration(days: 1)));
+        final lastMetKey = currentStats.unlockedAt != null ? _getDateKey(currentStats.unlockedAt!) : null;
+
+        if (lastMetKey == yesterdayKey) {
+          newStreak++;
+        } else if (lastMetKey == targetDateKey) {
+          // Already counted for this specific day
+        } else {
+          newStreak = 1;
+        }
+
+        if (newStreak > newLongestStreak) {
+          newLongestStreak = newStreak;
+        }
+        newUnlockedAt = operationDate;
+      }
+
+      final updatedStats = currentStats.copyWith(
+        totalWaterMl: currentStats.totalWaterMl + amountAddedMl,
+        streakDays: newStreak,
+        longestStreak: newLongestStreak,
+        totalGoalsCompleted: newTotalGoals,
+        unlockedAt: newUnlockedAt,
+      );
+
+      transaction.set(statsDocRef, updatedStats.toFirestore());
+    });
+  }
+
+  String _getDateKey(DateTime date) {
+    return "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
+  }
+
+  Stream<AchievementModel?> getUserStats() {
+    return _firestore
+        .collection(FirestoreConstants.users)
+        .doc(_uid)
+        .collection(FirestoreConstants.achievements)
+        .doc('stats')
+        .snapshots()
+        .map((doc) => doc.exists ? AchievementModel.fromFirestore(doc) : null);
   }
 }
+

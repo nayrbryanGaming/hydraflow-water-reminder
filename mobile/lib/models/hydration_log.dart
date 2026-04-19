@@ -118,3 +118,4 @@ class HydrationLog {
   @override
   int get hashCode => logId.hashCode;
 }
+

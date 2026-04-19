@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import '../core/theme/app_colors.dart';
 
 class GlassCard extends StatelessWidget {
   final Widget child;
@@ -28,8 +29,8 @@ class GlassCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(borderRadius),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 20,
+            color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.05),
+            blurRadius: 30,
             offset: const Offset(0, 10),
           ),
         ],
@@ -41,24 +42,23 @@ class GlassCard extends StatelessWidget {
           child: Container(
             padding: padding,
             decoration: BoxDecoration(
-              color: color ?? (isDark 
-                ? Colors.white.withOpacity(0.05) 
-                : Colors.white.withOpacity(0.2)),
               borderRadius: BorderRadius.circular(borderRadius),
               border: border ?? Border.all(
                 color: isDark 
-                  ? Colors.white.withOpacity(0.1) 
-                  : Colors.white.withOpacity(0.3),
+                  ? Colors.white.withOpacity(0.08) 
+                  : Colors.white.withOpacity(0.4),
                 width: 1.5,
               ),
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  (color ?? Colors.white).withOpacity(isDark ? 0.1 : 0.2),
-                  (color ?? Colors.white).withOpacity(isDark ? 0.02 : 0.05),
-                ],
-              ),
+              gradient: color != null 
+                ? LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      color!.withOpacity(0.2),
+                      color!.withOpacity(0.05),
+                    ],
+                  )
+                : AppColors.glassGradient(isDark),
             ),
             child: child,
           ),
@@ -67,3 +67,4 @@ class GlassCard extends StatelessWidget {
     );
   }
 }
+

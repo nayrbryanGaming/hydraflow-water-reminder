@@ -42,13 +42,31 @@ exports.onHydrationLogAdded = functions.firestore
       });
     });
 
-// Process end-of-day streak calculation
-// Note: Requires Pub/Sub and Firebase Blaze plan to run chron jobs
-exports.dailyStreakProcessor = functions.pubsub
-    .schedule("0 0 * * *")
-    .timeZone("UTC")
-    .onRun(async (context) => {
-      console.log("Running daily streak calculation...");
-      // Implementation omitted for brevity, handles missing days
-      return null;
+// Automatic User Data Cleanup on Account Deletion
+exports.onUserDeleted = functions.auth.user().onDelete(async (user) => {
+  const userId = user.uid;
+  console.log(`User ${userId} deleted. Starting recursive data purge...`);
+
+  const userRef = db.collection("users").doc(userId);
+  
+  // 1. Delete Subcollections (Logs, Reminders, Achievements)
+  // Note: For massive subcollections, use firebase-admin's recursive delete
+  const collections = ["hydration_logs", "reminders", "achievements"];
+  
+  for (const collectionName of collections) {
+    const snapshot = await userRef.collection(collectionName).get();
+    const batch = db.batch();
+    snapshot.docs.forEach((doc) => {
+      batch.delete(doc.ref);
     });
+    await batch.commit();
+    console.log(`Deleted collection: ${collectionName} for user ${userId}`);
+  }
+
+  // 2. Delete Main User Document
+  await userRef.delete();
+  console.log(`Successfully purged all data for user ${userId}`);
+  return null;
+});
+
+// End of Cloud Functions

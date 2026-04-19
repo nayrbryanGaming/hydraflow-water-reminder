@@ -4,72 +4,65 @@ class AppColors {
   AppColors._();
 
   // ─── Brand Colors ──────────────────────────────────────────────────
-  static const Color primaryBlue = Color(0xFF2F80ED);
-  static const Color secondaryAqua = Color(0xFF56CCF2);
-  static const Color accentMint = Color(0xFF6FCF97);
+  static const Color primaryBlue = Color(0xFF2F80ED);      // HydraFlow Main
+  static const Color secondaryAqua = Color(0xFF56CCF2);    // Hydration Wave
+  static const Color accentMint = Color(0xFF6FCF97);       // Healthy Habit
+  static const Color success = Color(0xFF6FCF97);          // Success UI (mapped to Mint)
+  static const Color backgroundWhite = Color(0xFFF9FBFF);  // Clean Paper
 
-  // ─── Background ────────────────────────────────────────────────────
-  static const Color backgroundWhite = Color(0xFFF9FBFF);
-  static const Color backgroundOcean = Color(0xFFE3F2FD);
-  static const Color backgroundCard = Color(0xFFFFFFFF);
-  static const Color backgroundDark = Color(0xFF0A1628);
-  static const Color backgroundCardDark = Color(0xFF132136);
-  static const Color backgroundDeepSea = Color(0xFF05101E);
+  // ─── Deep UI Colors ────────────────────────────────────────────────
+  static const Color backgroundDark = Color(0xFF0B0E14);   // Obsidian Night
+  static const Color backgroundCardDark = Color(0xFF161B22);
+  static const Color backgroundDeepSea = Color(0xFF05080F);
 
-  // ─── Glassmorphism ────────────────────────────────────────────────
-  static Color glassWhite = Colors.white.withOpacity(0.08);
-  static Color glassWhiteHeavy = Colors.white.withOpacity(0.25);
-  static Color glassDark = const Color(0xFF0A1628).withOpacity(0.4);
-  static Color glassBorder = Colors.white.withOpacity(0.2);
+  // ─── Glassmorphism System ──────────────────────────────────────────
+  static const Color glassBase = Color(0x1AFFFFFF);
+  static const Color glassStroke = Color(0x33FFFFFF);
+  static const Color glassBaseDark = Color(0x33000000);
+  
+  static LinearGradient glassGradient(bool isDark) {
+    return LinearGradient(
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+      colors: isDark 
+        ? [Colors.white.withOpacity(0.1), Colors.white.withOpacity(0.05)]
+        : [Colors.white.withOpacity(0.7), Colors.white.withOpacity(0.4)],
+    );
+  }
 
-  // ─── Text ──────────────────────────────────────────────────────────
-  static const Color textPrimary = Color(0xFF1A2B4A);
-  static const Color textSecondary = Color(0xFF5A7194);
-  static const Color textHint = Color(0xFFB0C4DE);
+  // ─── Text System ───────────────────────────────────────────────────
+  static const Color textPrimary = Color(0xFF0F172A);
+  static const Color textSecondary = Color(0xFF64748B);
+  static const Color textHint = Color(0xFF94A3B8);
+  static const Color textWhite = Color(0xFFF8FAFC);
 
-  // ─── Gradients ─────────────────────────────────────────────────────
-  static const LinearGradient primaryGradient = LinearGradient(
+  // ─── Premium Gradients ─────────────────────────────────────────────
+  static const LinearGradient mainGradient = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
-    colors: [Color(0xFF2F80ED), Color(0xFF56CCF2)],
+    colors: [primaryBlue, secondaryAqua],
+    stops: [0.0, 1.0],
   );
 
-  static const LinearGradient mintGradient = LinearGradient(
+  static const LinearGradient successGradient = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
-    colors: [Color(0xFF6FCF97), Color(0xFF43B78D)],
+    colors: [accentMint, Color(0xFF27AE60)],
   );
 
-  static const LinearGradient sunriseGradient = LinearGradient(
+  static const LinearGradient premiumGradient = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
     colors: [Color(0xFFF2994A), Color(0xFFF2C94C)],
   );
 
-  static const LinearGradient darkOceanGradient = LinearGradient(
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-    colors: [Color(0xFF0A1628), Color(0xFF132136)],
-  );
-
-  // ─── Status Colors ─────────────────────────────────────────────────
-  static const Color success = Color(0xFF27AE60);
-  static const Color warning = Color(0xFFF2994A);
-  static const Color error = Color(0xFFEB5757);
-  static const Color info = Color(0xFF2F80ED);
-
-  // ─── Hydration Level Colors ────────────────────────────────────────
-  static const Color hydrationLow = Color(0xFFEB5757);
-  static const Color hydrationMedium = Color(0xFFF2994A);
-  static const Color hydrationGood = Color(0xFF6FCF97);
-  static const Color hydrationExcellent = Color(0xFF2F80ED);
-
-  // ─── Divider / Border ──────────────────────────────────────────────
-  static const Color divider = Color(0xFFE8F0FE);
-  static const Color border = Color(0xFFD0E4FF);
-
-  // ─── Shadow ────────────────────────────────────────────────────────
-  static const Color shadow = Color(0xFF2F80ED);
-  static Color shadowHeavy = const Color(0xFF000000).withOpacity(0.12);
-  static Color shadowGlow = const Color(0xFF2F80ED).withOpacity(0.4);
+  // ─── Shadows ───────────────────────────────────────────────────────
+  static List<BoxShadow> premiumShadow(Color color) => [
+    BoxShadow(
+      color: color.withOpacity(0.3),
+      blurRadius: 20,
+      offset: const Offset(0, 10),
+    ),
+  ];
 }
+

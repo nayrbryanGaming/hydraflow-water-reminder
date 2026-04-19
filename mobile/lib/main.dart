@@ -18,29 +18,41 @@ final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize Firebase
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  // Initialize Services in parallel or sequential with error handling
+  try {
+    // Initialize Firebase
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
 
-  // Initialize Crashlytics
-  FlutterError.onError = (errorDetails) {
-    FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
-  };
-  PlatformDispatcher.instance.onError = (error, stack) {
-    FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
-    return true;
-  };
+    // Initialize Crashlytics
+    FlutterError.onError = (errorDetails) {
+      FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
+    };
+    PlatformDispatcher.instance.onError = (error, stack) {
+      FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+      return true;
+    };
+  } catch (e) {
+    debugPrint('Firebase Initialization Error: $e');
+  }
 
-  // Initialize Hive (local storage)
-  await Hive.initFlutter();
-  await Hive.openBox('hydraflow_prefs');
+  try {
+    // Initialize Hive (local storage)
+    await Hive.initFlutter();
+    await Hive.openBox('hydraflow_prefs');
+  } catch (e) {
+    debugPrint('Hive Initialization Error: $e');
+  }
 
-  // Initialize timezone
-  tz.initializeTimeZones();
-
-  // Initialize notifications
-  await NotificationService.instance.initialize(flutterLocalNotificationsPlugin);
+  try {
+    // Initialize timezone
+    tz.initializeTimeZones();
+    // Initialize notifications
+    await NotificationService.instance.initialize(flutterLocalNotificationsPlugin);
+  } catch (e) {
+    debugPrint('Notification Initialization Error: $e');
+  }
 
   runApp(const ProviderScope(child: HydraFlowApp()));
 }
@@ -62,3 +74,4 @@ class HydraFlowApp extends ConsumerWidget {
     );
   }
 }
+

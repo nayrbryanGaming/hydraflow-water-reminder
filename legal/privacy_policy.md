@@ -1,34 +1,29 @@
-# Privacy Policy
+# Privacy Policy for HydraFlow
 
-**Effective Date:** April 2026
+**Effective Date:** April 19, 2026
+**Last Updated:** April 19, 2026
 
-HydraFlow ("we", "our", or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our mobile application.
+At HydraFlow, we are committed to protecting your privacy and ensuring your health journey remains a private and secure experience. This Privacy Policy explains how we collect, use, and safeguard your data in compliance with the Google Play Store Data Safety requirements.
 
 ## 1. Information We Collect
-- **Profile Data**: Weight and daily goals. We use this to calculate personalized hydration targets. 
-- **Usage Data**: Water intake logs, timestamps, drink types, and app interaction data.
-- **Device Information**: We collect basic device information for crash reporting (Firebase Crashlytics) and notifications (Firebase Cloud Messaging).
 
-## 2. How We Use Your Information
-- To provide, operate, and maintain the app and its features.
-- To send you push notifications based on your chosen intervals.
-- To improve our app through anonymized analytics (Firebase Analytics).
+We collect only the minimum data necessary to provide you with an intelligent hydration experience:
 
-## 3. Data Retention and Deletion
-- **Retention**: We retain your data as long as your account is active.
-- **Deletion (Right to Erasure)**: You have the right to delete your account and all associated data at any time via the "Delete Account" button in the Settings menu. Upon deletion, your personal data is permanently removed from our production servers within 30 days.
+*   **Personal Information:** Email and display name via Firebase Authentication for cross-device syncing.
+*   **Health Metrics:** Biological data entered in the Smart Assessment Quiz (age, weight, activity level) is used to calculate personalized hydration goals.
+*   **Hydration Logs:** Your daily water intake logs are stored in our secure Firestore database.
+*   **Anonymized Analytics:** Aggregated usage metrics via Firebase Analytics to optimize reminder logic.
 
-## 4. Children's Privacy
-HydraFlow is not intended for children under 13. We do not knowingly collect information from children under 13. If we discover such data, we delete it immediately.
+## 2. Data Protection & Sovereignty
 
-## 5. Security
-We use industry-standard encryption (AES-256) via Google Firebase to protect your data. However, no method of transmission over the internet is 100% secure.
+*   **Zero Third-Party Sharing:** We do not sell or trade your health data.
+*   **Local-First Architecture:** Core habit-building data is processed on-device.
+*   **Encryption:** Industry-standard TLS and AES-256 equivalent protection.
 
-## 6. Your Rights
-You have the right to:
-- Access your data within the app.
-- Rectify any inaccurate data.
-- Withdraw consent for notifications at any time.
+## 3. Google Play Data Deletion Compliance
 
-## 7. Contact Us
-For privacy-related inquiries, please contact us at support@hydraflow.app.
+*   **Danger Zone:** A dedicated in-app module to permanently purge your entire account and all health telemetry.
+*   **Verified Purge:** Recursive deletion of all Firestore clusters and local Hive boxes upon request.
+
+## 4. Contact Us
+*   Email: `privacy@hydraflow.app`
