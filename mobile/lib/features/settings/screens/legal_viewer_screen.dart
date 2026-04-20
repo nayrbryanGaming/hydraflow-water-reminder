@@ -36,3 +36,4 @@ class LegalViewerScreen extends StatelessWidget {
   }
 }
 
+

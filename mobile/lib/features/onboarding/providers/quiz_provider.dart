@@ -55,3 +55,4 @@ final quizProvider = StateNotifierProvider<QuizNotifier, QuizState>((ref) {
   return QuizNotifier();
 });
 
+

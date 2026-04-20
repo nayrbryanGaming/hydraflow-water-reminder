@@ -191,7 +191,8 @@ class AchievementsScreen extends ConsumerWidget {
           ),
         ],
       ),
-    ).animate().fadeIn(delay: (index * 100).ms).scale(duration: 400.ms, curve: Curves\.easeOutBack);
+    ).animate().fadeIn(delay: (index * 100).ms).scale(duration: 400.ms, curve: Curves.easeOutBack);
   }
 }
+
 

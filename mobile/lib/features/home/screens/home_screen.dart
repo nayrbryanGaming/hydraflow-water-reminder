@@ -15,6 +15,7 @@ import '../../../models/hydration_log.dart';
 import '../../../services/insight_service.dart';
 import '../../../widgets/glass_card.dart';
 import '../../../widgets/wave_widget.dart';
+import '../../../core/providers/settings_providers.dart';
 
 final userProfileProvider = StreamProvider((ref) {
   return ref.watch(firestoreServiceProvider).getUserProfile();
@@ -244,10 +245,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       'CONTINUE',
                       style: GoogleFonts.outfit(fontWeight: FontWeight.bold, letterSpacing: 1),
                     ),
-                  ).animate().fadeIn(delay: 600.ms).scale(delay: 600.ms, curve: Curves\.easeOutBack),
+                  ).animate().fadeIn(delay: 600.ms).scale(delay: 600.ms, curve: Curves.easeOutBack),
                 ],
               ),
-            ).animate().scale(duration: 400.ms, curve: Curves\.easeOutBack).slideY(begin: 0.2),
+            ).animate().scale(duration: 400.ms, curve: Curves.easeOutBack).slideY(begin: 0.2),
           ],
         ),
       ),
@@ -326,7 +327,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     height: 1,
                   ),
                 ),
-              ).animate().scale(duration: 800.ms, curve: Curves\.easeOutBack),
+              ).animate().scale(duration: 800.ms, curve: Curves.easeOutBack),
               const SizedBox(height: 8),
               Text(
                 '${HydrationCalculator.formatMl(consumed, isMetric: ref.watch(unitPreferenceProvider))} / ${HydrationCalculator.formatMl(goal, isMetric: ref.watch(unitPreferenceProvider))}',
@@ -628,4 +629,5 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 }
+
 

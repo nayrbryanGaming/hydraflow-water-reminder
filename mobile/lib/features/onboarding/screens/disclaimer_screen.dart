@@ -147,6 +147,7 @@ class _DisclaimerScreenState extends State<DisclaimerScreen> {
   }
 
   Widget _buildAcknowledgementCheckbox() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return InkWell(
       onTap: () => setState(() => _hasAccepted = !_hasAccepted),
       borderRadius: BorderRadius.circular(12),
@@ -222,4 +223,5 @@ class _DisclaimerScreenState extends State<DisclaimerScreen> {
     ).animate().fadeIn(delay: 800.ms);
   }
 }
+
 

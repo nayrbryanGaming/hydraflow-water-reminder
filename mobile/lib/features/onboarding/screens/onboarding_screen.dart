@@ -289,7 +289,7 @@ class _PageContent extends StatelessWidget {
                 color: page.accentColor,
               ),
             ),
-          ).animate().scale(duration: 600.ms, curve: Curves\.easeOutBack),
+          ).animate().scale(duration: 600.ms, curve: Curves.easeOutBack),
           const SizedBox(height: 48),
           Text(
             page.title,
@@ -376,4 +376,5 @@ class _OnboardingPage {
     this.hasDisclaimer = false,
   });
 }
+
 
