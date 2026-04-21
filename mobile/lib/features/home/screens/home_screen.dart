@@ -16,18 +16,9 @@ import '../../../services/insight_service.dart';
 import '../../../widgets/glass_card.dart';
 import '../../../widgets/wave_widget.dart';
 import '../../../core/providers/settings_providers.dart';
+import '../../../services/hydration_stats_service.dart';
 
-final userProfileProvider = StreamProvider((ref) {
-  return ref.watch(firestoreServiceProvider).getUserProfile();
-});
 
-final todaysLogsProvider = StreamProvider((ref) {
-  return ref.watch(firestoreServiceProvider).getDailyLogs(DateTime.now());
-});
-
-final allLogsProvider = StreamProvider((ref) {
-  return ref.watch(firestoreServiceProvider).getAllHydrationLogs();
-});
 
 final calculatedStatsProvider = Provider((ref) {
   final logsAsync = ref.watch(allLogsProvider);
@@ -190,7 +181,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 boxShadow: [
                   BoxShadow(
                     color: AppColors.primaryBlue.withOpacity(0.5),
-                    radius: 100,
                     blurRadius: 100,
                   ),
                 ],

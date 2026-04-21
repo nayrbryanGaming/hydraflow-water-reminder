@@ -9,6 +9,7 @@ class AppColors {
   static const Color accentMint = Color(0xFF6FCF97);       // Healthy Habit
   static const Color success = Color(0xFF6FCF97);          // Success UI (mapped to Mint)
   static const Color backgroundWhite = Color(0xFFF9FBFF);  // Clean Paper
+  static const Color error = Color(0xFFEB5757);            // Error UI
 
   // ─── Deep UI Colors ────────────────────────────────────────────────
   static const Color backgroundDark = Color(0xFF0B0E14);   // Obsidian Night

@@ -212,7 +212,7 @@ class _WavePainter extends CustomPainter {
       size,
       yOffset + 6,
       totalAmplitude * 0.6,
-      color.withOpacity(0.2),
+      color.withValues(alpha: 0.2),
       waveValue * 1.8,
       reverse: true,
     );
@@ -223,7 +223,7 @@ class _WavePainter extends CustomPainter {
       size,
       yOffset + 2,
       totalAmplitude * 0.8,
-      Colors.white.withOpacity(0.08),
+      Colors.white.withValues(alpha: 0.08),
       waveValue * 1.5,
       reverse: false,
       onlyStroke: true,
@@ -236,7 +236,7 @@ class _WavePainter extends CustomPainter {
       size,
       yOffset + 3,
       totalAmplitude * 0.9,
-      color.withOpacity(0.4),
+      color.withValues(alpha: 0.4),
       waveValue * 1.2,
       reverse: false,
     );
@@ -262,7 +262,7 @@ class _WavePainter extends CustomPainter {
 
     // Shine / Surface Highlight
     final surfacePaint = Paint()
-      ..color = Colors.white.withOpacity(0.3)
+      ..color = Colors.white.withValues(alpha: 0.3)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 3;
     
@@ -291,8 +291,8 @@ class _WavePainter extends CustomPainter {
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
         colors: [
-          Colors.white.withOpacity(0.4),
-          Colors.white.withOpacity(0.0),
+          Colors.white.withValues(alpha: 0.4),
+          Colors.white.withValues(alpha: 0.0),
         ],
       ).createShader(Rect.fromLTWH(0, yOffset - amplitude, size.width, 20));
 
@@ -309,7 +309,7 @@ class _WavePainter extends CustomPainter {
     canvas.drawPath(
         path, 
         Paint()
-          ..color = Colors.white.withOpacity(0.15)
+          ..color = Colors.white.withValues(alpha: 0.15)
           ..style = PaintingStyle.stroke
           ..strokeWidth = 8
           ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4)
@@ -329,9 +329,9 @@ class _WavePainter extends CustomPainter {
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
         colors: [
-          color.withOpacity(0.8),
+          color.withValues(alpha: 0.8),
           color,
-          color.withOpacity(0.78), // replacing withAlpha(200) equivalent for consistency
+          color.withValues(alpha: 0.78), // replacing withAlpha(200) equivalent for consistency
         ],
       ).createShader(Rect.fromLTWH(0, yOffset - amplitude, size.width, size.height - yOffset + amplitude));
 

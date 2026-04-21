@@ -1,26 +1,20 @@
 # Terms of Service for HydraFlow
 
-**Last Updated:** April 19, 2026
+**Last Updated: April 21, 2026**
 
-Welcome to HydraFlow! By using our mobile application and services, you agree to comply with and be bound by the following terms and conditions.
+By using HydraFlow, you agree to these terms. Please read them carefully.
 
-## 1. Acceptance of Terms
-By accessing or using HydraFlow, you acknowledge that you have read, understood, and agree to be bound by these Terms of Service.
+## 1. Use of Service
+HydraFlow provides hydration tracking and reminders. You agree to use this service for personal, non-commercial purposes only.
 
-## 2. Use of Service
-HydraFlow provides a platform for tracking personal hydration and health metrics. You agree to use the service only for lawful purposes and in a way that does not infringe the rights of others.
+## 2. Health Disclaimer
+HydraFlow is NOT a medical device. Hydration goals are estimates based on general formulas. Always consult with a healthcare professional for your specific medical needs.
 
-## 3. User Accounts
-You are responsible for maintaining the confidentiality of your account credentials and for all activities that occur under your account.
+## 3. User Responsibility
+You are responsible for maintaining the confidentiality of your account.
 
-## 4. Health Information
-HydraFlow is not a medical device. The information provided is for educational and motivational purposes only. Always consult a healthcare professional for personalized medical advice.
+## 4. Limitation of Liability
+We are not liable for any health issues arising from the use or misuse of the application.
 
-## 5. Account Deletion & Data Sovereignty
-In compliance with Google Play Store policies, we provide a "Danger Zone" module in the app settings where you can permanently and recursively delete your account and all associated telemetry from our production clusters.
-
-## 6. Limitation of Liability
-HydraFlow is provided "as is." We make no warranties regarding the accuracy or reliability of the hydration tracking or reminder systems.
-
-## 7. Contact
-For legal inquiries: `legal@hydraflow.app`
+## 5. Governing Law
+These terms are governed by the laws of your jurisdiction.

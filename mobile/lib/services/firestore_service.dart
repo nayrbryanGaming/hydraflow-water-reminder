@@ -22,6 +22,18 @@ final userStatsProvider = StreamProvider((ref) {
   return service.getUserStats();
 });
 
+final userProfileProvider = StreamProvider((ref) {
+  return ref.watch(firestoreServiceProvider).getUserProfile();
+});
+
+final todaysLogsProvider = StreamProvider((ref) {
+  return ref.watch(firestoreServiceProvider).getDailyLogs(DateTime.now());
+});
+
+final allLogsProvider = StreamProvider((ref) {
+  return ref.watch(firestoreServiceProvider).getAllHydrationLogs();
+});
+
 class FirestoreService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final AuthService _authService;

@@ -18,6 +18,7 @@ import '../../features/settings/screens/settings_screen.dart';
 import '../../features/hydration/screens/log_water_screen.dart';
 import '../../features/onboarding/screens/permission_priming_screen.dart';
 import '../../services/auth_service.dart';
+import '../constants/legal_constants.dart';
 
 import 'main_layout_screen.dart';
 

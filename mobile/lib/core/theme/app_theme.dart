@@ -36,13 +36,13 @@ class AppTheme {
         ),
         iconTheme: const IconThemeData(color: AppColors.textPrimary, size: 24),
       ),
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         color: Colors.white,
         elevation: 0,
         margin: EdgeInsets.zero,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(24),
-          side: BorderSide(color: AppColors.primaryBlue.withOpacity(0.05), width: 1),
+          side: BorderSide(color: AppColors.primaryBlue.withValues(alpha: 0.05), width: 1),
         ),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
@@ -60,7 +60,7 @@ class AppTheme {
           ),
           elevation: 0,
         ).copyWith(
-          overlayColor: WidgetStateProperty.all(Colors.white.withOpacity(0.1)),
+          overlayColor: WidgetStateProperty.all(Colors.white.withValues(alpha: 0.1)),
         ),
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
@@ -83,11 +83,11 @@ class AppTheme {
         contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(24),
-          borderSide: BorderSide(color: AppColors.primaryBlue.withOpacity(0.1)),
+          borderSide: BorderSide(color: AppColors.primaryBlue.withValues(alpha: 0.1)),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(24),
-          borderSide: BorderSide(color: AppColors.primaryBlue.withOpacity(0.1)),
+          borderSide: BorderSide(color: AppColors.primaryBlue.withValues(alpha: 0.1)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(24),
@@ -156,13 +156,13 @@ class AppTheme {
         ),
         iconTheme: const IconThemeData(color: AppColors.textWhite, size: 24),
       ),
-      cardTheme: CardTheme(
+      cardTheme: CardThemeData(
         color: AppColors.backgroundCardDark,
         elevation: 0,
         margin: EdgeInsets.zero,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(24),
-          side: BorderSide(color: Colors.white.withOpacity(0.08), width: 1),
+          side: BorderSide(color: Colors.white.withValues(alpha: 0.08), width: 1),
         ),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
@@ -187,11 +187,11 @@ class AppTheme {
         contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(24),
-          borderSide: BorderSide(color: Colors.white.withOpacity(0.05)),
+          borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.05)),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(24),
-          borderSide: BorderSide(color: Colors.white.withOpacity(0.05)),
+          borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.05)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(24),
