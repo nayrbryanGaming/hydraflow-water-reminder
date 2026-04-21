@@ -45,8 +45,8 @@ class GlassCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(borderRadius),
               border: border ?? Border.all(
                 color: isDark 
-                  ? Colors.white.withOpacity(0.08) 
-                  : Colors.white.withOpacity(0.4),
+                  ? Colors.white.withValues(alpha: 0.08) 
+                  : Colors.white.withValues(alpha: 0.4),
                 width: 1.5,
               ),
               gradient: color != null 
@@ -54,8 +54,8 @@ class GlassCard extends StatelessWidget {
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
-                      color!.withOpacity(0.2),
-                      color!.withOpacity(0.05),
+                      color!.withValues(alpha: 0.2),
+                      color!.withValues(alpha: 0.05),
                     ],
                   )
                 : AppColors.glassGradient(isDark),

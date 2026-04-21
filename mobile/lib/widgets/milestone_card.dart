@@ -37,7 +37,7 @@ class MilestoneCard extends StatelessWidget {
         ),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primaryBlue.withOpacity(0.4),
+            color: AppColors.primaryBlue.withValues(alpha: 0.4),
             blurRadius: 20,
             offset: const Offset(0, 10),
           ),
@@ -54,7 +54,7 @@ class MilestoneCard extends StatelessWidget {
               width: 200,
               height: 200,
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.1),
+                color: Colors.white.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
             ),
@@ -94,7 +94,7 @@ class MilestoneCard extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
+                        color: Colors.white.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(16),
                       ),
                       child: const Icon(Icons.water_drop_rounded, color: Colors.white),
@@ -116,7 +116,7 @@ class MilestoneCard extends StatelessWidget {
                             child: CircularProgressIndicator(
                               value: percentage,
                               strokeWidth: 12,
-                              backgroundColor: Colors.white.withOpacity(0.1),
+                              backgroundColor: Colors.white.withValues(alpha: 0.1),
                               valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
                             ),
                           ).animate().scale(duration: 800.ms, curve: Curves.elasticOut),
@@ -146,7 +146,7 @@ class MilestoneCard extends StatelessWidget {
                       
                       GlassCard(
                         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                        color: Colors.white.withOpacity(0.1),
+                        color: Colors.white.withValues(alpha: 0.1),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
@@ -196,7 +196,7 @@ class MilestoneCard extends StatelessWidget {
                     Text(
                       '#HydraFlow',
                       style: GoogleFonts.outfit(
-                        color: Colors.white.withOpacity(0.5),
+                        color: Colors.white.withValues(alpha: 0.5),
                         fontWeight: FontWeight.w800,
                         fontStyle: FontStyle.italic,
                       ),
