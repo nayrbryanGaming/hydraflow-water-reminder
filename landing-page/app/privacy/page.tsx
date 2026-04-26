@@ -22,11 +22,11 @@ export default function PrivacyPage() {
           <section>
             <h2 className="text-2xl font-bold text-gray-800 mb-4">1. Data We Collect</h2>
             <p>
-              To provide a personalized hydration experience, HydraFlow collects the following information:
+              To provide a personalized hydration experience, HydraFlow calculates your needs locally.
               <ul className="list-disc pl-6 mt-4 space-y-2">
-                <li><strong>Personal Parameters</strong>: Weight, age, and activity level (used exclusively for hydration target calculation).</li>
+                <li><strong>Personal Parameters</strong>: Weight, age, and activity level (stored strictly on your local device).</li>
                 <li><strong>Usage Data</strong>: Water intake logs (time, amount, and type of beverage).</li>
-                <li><strong>Device Information</strong>: Device IDs for secure synchronization and intelligent push reminders.</li>
+                <li><strong>Data Location</strong>: All data is stored in the application's local sandbox on your physical hardware.</li>
               </ul>
             </p>
           </section>
@@ -34,25 +34,23 @@ export default function PrivacyPage() {
           <section>
             <h2 className="text-2xl font-bold text-gray-800 mb-4">2. Data Usage</h2>
             <p>
-              Your data is used strictly for identifying optimal hydration windows and calculating daily progress. 
-              We utilize <strong>anonymous event tracking</strong> to improve our behavioral nudge engine and gamification metrics.
+              Your data is used strictly for identifying optimal hydration windows and calculating daily progress locally. 
+              <strong>No data leaves your device.</strong> We do not track you across other apps or share your information with any third parties.
             </p>
           </section>
 
           <section>
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">3. Data Security & Storage</h2>
+            <h2 className="text-2xl font-bold text-gray-800 mb-4">3. Data Security & Sovereignty</h2>
             <p>
-              HydraFlow leverages <strong>Firebase (Google Cloud Infrastructure)</strong> for processing and storage. 
-              All data transmission is encrypted using industry-standard protocols.
+              HydraFlow is a <strong>100% offline application</strong>. We do not use Firebase, Google Cloud, or any remote servers for data storage. 
+              Your data remains under your absolute control at all times.
             </p>
           </section>
 
           <section>
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">4. Account Deletion & Portability</h2>
+            <h2 className="text-2xl font-bold text-gray-800 mb-4">4. Data Deletion</h2>
             <p>
-              In accordance with Google Play's Data Safety policies, we provide a simplified account deletion process both within the application and via our 
-              <a href="/delete-account" className="text-blue-600 font-bold ml-1 hover:underline">Web-based Deletion Form</a>.
-              Upon deletion, all logs, profile data, and achievements are permanently purged from our servers within 30 days.
+              Since all data is stored locally, deleting the application or using the "Reset All Data" function within the app will permanently and immediately erase all logs and profile data from your device. 
             </p>
           </section>
 

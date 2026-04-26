@@ -30,11 +30,11 @@ class AppTheme {
         scrolledUnderElevation: 0,
         titleTextStyle: GoogleFonts.outfit(
           fontSize: 22,
-          fontWeight: FontWeight.w700,
+          fontWeight: FontWeight.w900,
           color: AppColors.textPrimary,
           letterSpacing: -0.5,
         ),
-        iconTheme: const IconThemeData(color: AppColors.textPrimary, size: 24),
+        iconTheme: const IconThemeData(color: AppColors.textPrimary, size: 28),
       ),
       cardTheme: CardThemeData(
         color: Colors.white,
@@ -135,7 +135,7 @@ class AppTheme {
         primary: AppColors.primaryBlue,
         secondary: AppColors.secondaryAqua,
         tertiary: AppColors.accentMint,
-        surface: AppColors.backgroundDark,
+        surface: AppColors.backgroundCardDark,
         onPrimary: Colors.white,
         onSurface: AppColors.textWhite,
         error: Color(0xFFEB5757),
@@ -150,11 +150,11 @@ class AppTheme {
         scrolledUnderElevation: 0,
         titleTextStyle: GoogleFonts.outfit(
           fontSize: 22,
-          fontWeight: FontWeight.w700,
+          fontWeight: FontWeight.w900,
           color: AppColors.textWhite,
           letterSpacing: -0.5,
         ),
-        iconTheme: const IconThemeData(color: AppColors.textWhite, size: 24),
+        iconTheme: const IconThemeData(color: AppColors.textWhite, size: 28),
       ),
       cardTheme: CardThemeData(
         color: AppColors.backgroundCardDark,
@@ -162,8 +162,24 @@ class AppTheme {
         margin: EdgeInsets.zero,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(24),
-          side: BorderSide(color: Colors.white.withValues(alpha: 0.08), width: 1),
+          side: BorderSide(color: Colors.white.withValues(alpha: 0.1), width: 1.5),
         ),
+      ),
+      navigationBarTheme: NavigationBarThemeData(
+        backgroundColor: AppColors.backgroundDeepSea,
+        indicatorColor: AppColors.primaryBlue.withValues(alpha: 0.2),
+        labelTextStyle: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
+            return GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.w900, color: AppColors.primaryBlue);
+          }
+          return GoogleFonts.outfit(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.textWhiteSecondary);
+        }),
+        iconTheme: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
+            return const IconThemeData(color: AppColors.primaryBlue, size: 28);
+          }
+          return const IconThemeData(color: AppColors.textWhiteSecondary, size: 24);
+        }),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
@@ -187,29 +203,29 @@ class AppTheme {
         contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(24),
-          borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.05)),
+          borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(24),
-          borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.05)),
+          borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(24),
           borderSide: const BorderSide(color: AppColors.primaryBlue, width: 2),
         ),
-        labelStyle: GoogleFonts.outfit(fontSize: 14, color: Colors.white70),
+        labelStyle: GoogleFonts.outfit(fontSize: 14, color: AppColors.textWhiteSecondary),
         hintStyle: GoogleFonts.outfit(fontSize: 14, color: AppColors.textHint),
       ),
       listTileTheme: ListTileThemeData(
         contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 4),
         titleTextStyle: GoogleFonts.outfit(
-          fontWeight: FontWeight.w600,
+          fontWeight: FontWeight.w700,
           fontSize: 16,
           color: AppColors.textWhite,
         ),
         subtitleTextStyle: GoogleFonts.outfit(
           fontSize: 14,
-          color: Colors.white70,
+          color: AppColors.textWhiteSecondary,
         ),
         iconColor: AppColors.primaryBlue,
       ),

@@ -1,124 +1,74 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import '../models/user_model.dart';
-import '../core/constants/firestore_constants.dart';
-
-final firebaseAuthProvider = Provider<FirebaseAuth>((ref) {
-  return FirebaseAuth.instance;
-});
 
 final authServiceProvider = Provider<AuthService>((ref) {
-  return AuthService(ref.watch(firebaseAuthProvider));
+  return AuthService();
 });
 
-final authStateProvider = StreamProvider<User?>((ref) {
-  return ref.watch(firebaseAuthProvider).authStateChanges();
-});
+class LocalUser {
+  final String uid;
+  final String? email;
+  final String? displayName;
+  LocalUser({required this.uid, this.email, this.displayName});
+}
 
 class AuthService {
-  final FirebaseAuth _auth;
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  static const String _userBoxName = 'hydraflow_user';
 
-  AuthService(this._auth);
-
-  User? get currentUser => _auth.currentUser;
-
-  Future<void> signInWithEmailAndPassword(String email, String password) async {
-    await _auth.signInWithEmailAndPassword(email: email, password: password);
+  LocalUser? get currentUser {
+    if (!Hive.isBoxOpen(_userBoxName)) return null;
+    final box = Hive.box(_userBoxName);
+    final data = box.get('profile');
+    if (data != null) {
+      final user = UserModel.fromMap(Map<String, dynamic>.from(data));
+      return LocalUser(uid: user.userId, email: user.email, displayName: user.displayName);
+    }
+    return null;
   }
 
-  Future<void> registerWithEmailAndPassword({
-    required String email,
-    required String password,
+  Future<void> registerLocally({
     required String displayName,
+    required String email,
     required double weightKg,
     required int dailyGoalMl,
     required int age,
-    required String hydrationObjective,
     required String activityLevel,
+    required String hydrationObjective,
     required bool isHotClimate,
   }) async {
-    final userCredential = await _auth.createUserWithEmailAndPassword(
+    final box = Hive.box(_userBoxName);
+    final user = UserModel(
+      userId: 'local_${DateTime.now().millisecondsSinceEpoch}',
       email: email,
-      password: password,
+      displayName: displayName,
+      weightKg: weightKg,
+      dailyWaterGoalMl: dailyGoalMl,
+      age: age,
+      activityLevel: activityLevel,
+      hydrationObjective: hydrationObjective,
+      isHotClimate: isHotClimate,
+      createdAt: DateTime.now(),
+      updatedAt: DateTime.now(),
     );
-
-    final user = userCredential.user;
-    if (user != null) {
-      final userModel = UserModel(
-        userId: user.uid,
-        email: email,
-        displayName: displayName,
-        weightKg: weightKg,
-        dailyWaterGoalMl: dailyGoalMl,
-        createdAt: DateTime.now(),
-        updatedAt: DateTime.now(),
-        age: age,
-        hydrationObjective: hydrationObjective,
-        activityLevel: activityLevel,
-        isHotClimate: isHotClimate,
-      );
-
-      await _firestore
-          .collection(FirestoreConstants.users)
-          .doc(user.uid)
-          .set(userModel.toFirestore());
-    }
+    await box.put('profile', user.toMap());
   }
 
-  Future<void> signOut() async {
-    await _auth.signOut();
+  Future<void> signInWithEmailAndPassword(String email, String password) async {
+    // Mock sign in for offline app
+    return;
   }
   
-  Future<void> sendPasswordResetEmail(String email) async {
-    await _auth.sendPasswordResetEmail(email: email);
-  }
-
-  Future<void> reauthenticate(String email, String password) async {
-    final user = _auth.currentUser;
-    if (user != null && user.email != null) {
-      final credential = EmailAuthProvider.credential(
-        email: email,
-        password: password,
-      );
-      await user.reauthenticateWithCredential(credential);
-    }
+  Future<void> signOut() async {
+    // In local-only, we might just want to clear the profile
+    final box = Hive.box(_userBoxName);
+    await box.delete('profile');
   }
 
   Future<void> deleteUserAccount() async {
-    final user = _auth.currentUser;
-    if (user != null) {
-      final uid = user.uid;
-      final userDoc = _firestore.collection(FirestoreConstants.users).doc(uid);
-
-      // Recursive deletion of known subcollections for compliance
-      final subcollections = [
-        FirestoreConstants.hydrationLogs,
-        FirestoreConstants.reminders,
-        FirestoreConstants.achievements,
-      ];
-
-      for (final sub in subcollections) {
-        final collectionRef = userDoc.collection(sub);
-        final snippets = await collectionRef.get();
-        for (final doc in snippets.docs) {
-          await doc.reference.delete();
-        }
-      }
-
-      await userDoc.delete();
-      
-      try {
-        await user.delete();
-      } on FirebaseAuthException catch (e) {
-        if (e.code == 'requires-recent-login') {
-          throw Exception('Security requirement: Please log out and log back in to delete your account.');
-        }
-        rethrow;
-      }
-    }
+    final box = Hive.box(_userBoxName);
+    await box.clear();
+    await Hive.box('hydraflow_logs').clear();
+    await Hive.box('hydraflow_stats').clear();
   }
 }
-
-

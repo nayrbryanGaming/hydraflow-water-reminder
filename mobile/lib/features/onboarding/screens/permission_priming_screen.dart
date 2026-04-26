@@ -7,6 +7,7 @@ import '../../../core/router/app_router.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../services/notification_service.dart';
 import '../../../widgets/glass_card.dart';
+import '../../../core/localization/app_strings.dart';
 
 class PermissionPrimingScreen extends ConsumerWidget {
   const PermissionPrimingScreen({super.key});
@@ -37,28 +38,30 @@ class PermissionPrimingScreen extends ConsumerWidget {
                 _buildIconContainer(),
                 const SizedBox(height: 48),
                 Text(
-                  'Consistency is Key',
+                  AppStrings.get('consistency_key', ref),
                   style: GoogleFonts.outfit(
                     fontSize: 32,
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w900,
                     letterSpacing: -1,
+                    color: isDark ? Colors.white : AppColors.textPrimary,
                   ),
                   textAlign: TextAlign.center,
                 ).animate().fadeIn().slideY(begin: 0.2),
                 const SizedBox(height: 16),
                 Text(
-                  'To help you build a lasting habit, HydraFlow sends gentle, smart reminders based on your activity and goal progress.',
+                  AppStrings.get('reminder_desc', ref),
                   style: GoogleFonts.outfit(
                     fontSize: 16,
-                    color: AppColors.textSecondary,
+                    color: isDark ? Colors.white70 : AppColors.textSecondary,
                     height: 1.5,
+                    fontWeight: FontWeight.w600,
                   ),
                   textAlign: TextAlign.center,
                 ).animate().fadeIn(delay: 200.ms),
                 const SizedBox(height: 48),
-                _buildFeatureList(),
+                _buildFeatureList(ref, isDark),
                 const Spacer(),
-                _buildActionButtons(context),
+                _buildActionButtons(context, ref, isDark),
               ],
             ),
           ),
@@ -85,35 +88,35 @@ class PermissionPrimingScreen extends ConsumerWidget {
      .shimmer(delay: 1.seconds, duration: 2.seconds);
   }
 
-  Widget _buildFeatureList() {
+  Widget _buildFeatureList(WidgetRef ref, bool isDark) {
     return GlassCard(
       padding: const EdgeInsets.all(24),
       child: Column(
         children: [
-          _buildFeatureItem(Icons.auto_awesome_outlined, 'Smart Intervals (AI Spacing)'),
+          _buildFeatureItem(Icons.auto_awesome_outlined, AppStrings.get('smart_intervals', ref), isDark),
           const Divider(height: 24, color: Colors.white10),
-          _buildFeatureItem(Icons.bedtime_outlined, 'Quiet Hours (No night pings)'),
+          _buildFeatureItem(Icons.bedtime_outlined, AppStrings.get('quiet_hours_desc', ref), isDark),
           const Divider(height: 24, color: Colors.white10),
-          _buildFeatureItem(Icons.insights_outlined, 'Goal-Driven (Adaptive nudges)'),
+          _buildFeatureItem(Icons.insights_outlined, AppStrings.get('goal_driven', ref), isDark),
         ],
       ),
     ).animate().fadeIn(delay: 400.ms).slideY(begin: 0.1);
   }
 
-  Widget _buildFeatureItem(IconData icon, String text) {
+  Widget _buildFeatureItem(IconData icon, String text, bool isDark) {
     return Row(
       children: [
         Icon(icon, size: 20, color: AppColors.secondaryAqua),
         const SizedBox(width: 16),
         Text(
           text,
-          style: GoogleFonts.outfit(fontWeight: FontWeight.w500, fontSize: 14),
+          style: GoogleFonts.outfit(fontWeight: FontWeight.w700, fontSize: 14, color: isDark ? Colors.white : AppColors.textPrimary),
         ),
       ],
     );
   }
 
-  Widget _buildActionButtons(BuildContext context) {
+  Widget _buildActionButtons(BuildContext context, WidgetRef ref, bool isDark) {
     return Column(
       children: [
         SizedBox(
@@ -133,8 +136,8 @@ class PermissionPrimingScreen extends ConsumerWidget {
               shadowColor: AppColors.primaryBlue.withOpacity(0.5),
             ),
             child: Text(
-              'Allow Smart Reminders',
-              style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 18),
+              AppStrings.get('allow_reminders', ref),
+              style: GoogleFonts.outfit(fontWeight: FontWeight.w900, fontSize: 18),
             ),
           ),
         ),
@@ -142,13 +145,11 @@ class PermissionPrimingScreen extends ConsumerWidget {
         TextButton(
           onPressed: () => context.go(routeRegister),
           child: Text(
-            'Maybe later',
-            style: GoogleFonts.outfit(color: AppColors.textSecondary, fontWeight: FontWeight.w600),
+            AppStrings.get('maybe_later', ref),
+            style: GoogleFonts.outfit(color: isDark ? Colors.white60 : AppColors.textSecondary, fontWeight: FontWeight.w900),
           ),
         ),
       ],
     ).animate().fadeIn(delay: 600.ms);
   }
 }
-
-

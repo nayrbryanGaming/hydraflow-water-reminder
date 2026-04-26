@@ -12,30 +12,31 @@ class AppColors {
   static const Color error = Color(0xFFEB5757);            // Error UI
 
   // ─── Deep UI Colors ────────────────────────────────────────────────
-  static const Color backgroundDark = Color(0xFF0B0E14);   // Obsidian Night
-  static const Color backgroundCardDark = Color(0xFF161B22);
-  static const Color backgroundDeepSea = Color(0xFF05080F);
+  static const Color backgroundDark = Color(0xFF0F172A);   // Refined Navy Night
+  static const Color backgroundCardDark = Color(0xFF1E293B);
+  static const Color backgroundDeepSea = Color(0xFF020617); // Ultimate Contrast Base
 
   // ─── Glassmorphism System ──────────────────────────────────────────
   static const Color glassBase = Color(0x1AFFFFFF);
   static const Color glassStroke = Color(0x33FFFFFF);
-  static const Color glassBaseDark = Color(0x33000000);
+  static const Color glassBaseDark = Color(0x1A000000);
   
   static LinearGradient glassGradient(bool isDark) {
     return LinearGradient(
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
       colors: isDark 
-        ? [Colors.white.withOpacity(0.1), Colors.white.withOpacity(0.05)]
-        : [Colors.white.withOpacity(0.7), Colors.white.withOpacity(0.4)],
+        ? [Colors.white.withValues(alpha: 0.1), Colors.white.withValues(alpha: 0.05)]
+        : [Colors.white.withValues(alpha: 0.7), Colors.white.withValues(alpha: 0.4)],
     );
   }
 
   // ─── Text System ───────────────────────────────────────────────────
-  static const Color textPrimary = Color(0xFF0F172A);
-  static const Color textSecondary = Color(0xFF64748B);
-  static const Color textHint = Color(0xFF94A3B8);
-  static const Color textWhite = Color(0xFFF8FAFC);
+  static const Color textPrimary = Color(0xFF0F172A);    // Dark Blue for Light Mode
+  static const Color textSecondary = Color(0xFF475569);  // Slate 600
+  static const Color textHint = Color(0xFF94A3B8);       // Slate 400
+  static const Color textWhite = Color(0xFFF8FAFC);     // Slate 50 for Dark Mode
+  static const Color textWhiteSecondary = Color(0xFFCBD5E1); // Slate 300 for Dark Mode Subtitles
 
   // ─── Premium Gradients ─────────────────────────────────────────────
   static const LinearGradient mainGradient = LinearGradient(

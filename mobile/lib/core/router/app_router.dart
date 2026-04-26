@@ -2,7 +2,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../features/analytics/screens/analytics_screen.dart';
-import '../../features/auth/screens/login_screen.dart';
 import '../../features/auth/screens/register_screen.dart';
 import '../../features/home/screens/home_screen.dart';
 import '../../features/onboarding/screens/disclaimer_screen.dart';
@@ -26,17 +25,16 @@ import 'main_layout_screen.dart';
 
 const String routeOnboarding = '/onboarding';
 const String routeDisclaimer = '/disclaimer';
-const String routeLogin = '/login';
 const String routeQuiz = '/quiz';
 const String routePermissionPriming = '/permission-priming';
 const String routeRegister = '/register';
 const String routeHome = '/home';
-const String routeLogWater = 'log-water'; // sub-route
+const String routeLogWater = '/home/log-water'; 
 const String routeAnalytics = '/analytics';
 const String routeReminders = '/reminders';
 const String routeAchievements = '/achievements';
 const String routeSettings = '/settings';
-const String routeProfile = '/profile';
+const String routeProfile = '/settings/profile';
 const String routeLegal = '/legal';
 const String routePremium = '/premium';
 
@@ -48,8 +46,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
     initialLocation: routeOnboarding,
     redirect: (context, state) {
       final isLoggedIn = authService.currentUser != null;
-      final isGoingToAuth = state.matchedLocation == routeLogin ||
-          state.matchedLocation == routeRegister ||
+      final isGoingToAuth = state.matchedLocation == routeRegister ||
           state.matchedLocation == routeOnboarding ||
           state.matchedLocation == routeDisclaimer ||
           state.matchedLocation == routeQuiz ||
@@ -71,10 +68,6 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: routeDisclaimer,
         builder: (context, state) => const DisclaimerScreen(),
-      ),
-      GoRoute(
-        path: routeLogin,
-        builder: (context, state) => const LoginScreen(),
       ),
       GoRoute(
         path: routeQuiz,
@@ -102,7 +95,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                 builder: (context, state) => const HomeScreen(),
                 routes: [
                   GoRoute(
-                    path: routeLogWater,
+                    path: 'log-water',
                     builder: (context, state) => const LogWaterScreen(),
                   ),
                 ],
@@ -142,7 +135,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const SettingsScreen(),
         routes: [
           GoRoute(
-            path: 'profile', // sub-route
+            path: 'profile',
             builder: (context, state) => const ProfileScreen(),
           ),
         ],

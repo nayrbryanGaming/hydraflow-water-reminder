@@ -7,15 +7,16 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../core/router/app_router.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../widgets/glass_card.dart';
+import '../../../core/localization/app_strings.dart';
 
-class DisclaimerScreen extends StatefulWidget {
+class DisclaimerScreen extends ConsumerStatefulWidget {
   const DisclaimerScreen({super.key});
 
   @override
-  State<DisclaimerScreen> createState() => _DisclaimerScreenState();
+  ConsumerState<DisclaimerScreen> createState() => _DisclaimerScreenState();
 }
 
-class _DisclaimerScreenState extends State<DisclaimerScreen> {
+class _DisclaimerScreenState extends ConsumerState<DisclaimerScreen> {
   bool _hasAccepted = false;
 
   Future<void> _acceptDisclaimer() async {
@@ -49,21 +50,23 @@ class _DisclaimerScreenState extends State<DisclaimerScreen> {
                 _buildIconContainer(),
                 const SizedBox(height: 32),
                 Text(
-                  'Safety & Transparency',
+                  AppStrings.get('safety_transparency', ref),
                   style: GoogleFonts.outfit(
                     fontSize: 32,
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w900,
                     letterSpacing: -1,
+                    color: isDark ? Colors.white : AppColors.textPrimary,
                   ),
                   textAlign: TextAlign.center,
                 ).animate().fadeIn().slideY(begin: 0.1),
                 const SizedBox(height: 16),
                 Text(
-                  'HydraFlow is a hydration habit builder. By continuing, you acknowledge our data policies and medical disclaimers.',
+                  AppStrings.get('disclaimer_body', ref),
                   style: GoogleFonts.outfit(
                     fontSize: 16,
-                    color: AppColors.textSecondary,
+                    color: isDark ? Colors.white70 : AppColors.textSecondary,
                     height: 1.5,
+                    fontWeight: FontWeight.w600,
                   ),
                   textAlign: TextAlign.center,
                 ).animate().fadeIn(delay: 200.ms),
@@ -105,14 +108,14 @@ class _DisclaimerScreenState extends State<DisclaimerScreen> {
           children: [
             _buildTermItem(
               Icons.health_and_safety_outlined,
-              'Clinical Standard Basis',
-              'HydraFlow calculation models are based on population standards from the National Academies of Medicine (NAM) and WHO guidelines. These are generalized targets only.',
+              AppStrings.get('clinical_standard', ref),
+              AppStrings.get('clinical_desc', ref),
             ),
             const Divider(height: 32, color: Colors.white10),
             _buildTermItem(
               Icons.lock_outline_rounded,
-              'Transparent Data Erasure',
-              'We prioritize your privacy. You can export your data or delete your entire account permanently at any time via the "Danger Zone" in Settings.',
+              AppStrings.get('transparent_erasure', ref),
+              AppStrings.get('erasure_desc', ref),
             ),
           ],
         ),
@@ -121,6 +124,7 @@ class _DisclaimerScreenState extends State<DisclaimerScreen> {
   }
 
   Widget _buildTermItem(IconData icon, String title, String desc) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -132,12 +136,12 @@ class _DisclaimerScreenState extends State<DisclaimerScreen> {
             children: [
               Text(
                 title,
-                style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 16),
+                style: GoogleFonts.outfit(fontWeight: FontWeight.w900, fontSize: 16, color: isDark ? Colors.white : AppColors.textPrimary),
               ),
               const SizedBox(height: 8),
               Text(
                 desc,
-                style: GoogleFonts.outfit(fontSize: 13, color: AppColors.textHint, height: 1.4),
+                style: GoogleFonts.outfit(fontSize: 13, color: isDark ? Colors.white60 : AppColors.textHint, height: 1.4, fontWeight: FontWeight.w600),
               ),
             ],
           ),
@@ -162,35 +166,26 @@ class _DisclaimerScreenState extends State<DisclaimerScreen> {
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
             ),
             Expanded(
-              child: InkWell(
-                onTap: () {
-                  // This allows clicking the text itself to toggle the checkbox
-                  setState(() => _hasAccepted = !_hasAccepted);
-                },
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8),
-                  child: RichText(
-                    text: TextSpan(
-                      style: GoogleFonts.outfit(
-                        fontSize: 13, 
-                        fontWeight: FontWeight.w500,
-                        color: isDark ? Colors.white : Colors.black87,
-                      ),
-                      children: [
-                        const TextSpan(text: 'I have read and agree to the '),
-                        TextSpan(
-                          text: 'Terms of Service',
-                          style: const TextStyle(color: AppColors.primaryBlue, decoration: TextDecoration.underline),
-                        ),
-                        const TextSpan(text: ' & '),
-                        TextSpan(
-                          text: 'Privacy Policy',
-                          style: const TextStyle(color: AppColors.primaryBlue, decoration: TextDecoration.underline),
-                        ),
-                        const TextSpan(text: '.'),
-                      ],
-                    ),
+              child: RichText(
+                text: TextSpan(
+                  style: GoogleFonts.outfit(
+                    fontSize: 13, 
+                    fontWeight: FontWeight.w600,
+                    color: isDark ? Colors.white : Colors.black87,
                   ),
+                  children: [
+                    TextSpan(text: AppStrings.get('agree_terms_start', ref)),
+                    TextSpan(
+                      text: AppStrings.get('agree_terms_mid', ref),
+                      style: const TextStyle(color: AppColors.primaryBlue, decoration: TextDecoration.underline),
+                    ),
+                    const TextSpan(text: ' & '),
+                    TextSpan(
+                      text: AppStrings.get('agree_terms_end', ref),
+                      style: const TextStyle(color: AppColors.primaryBlue, decoration: TextDecoration.underline),
+                    ),
+                    const TextSpan(text: '.'),
+                  ],
                 ),
               ),
             ),
@@ -216,12 +211,10 @@ class _DisclaimerScreenState extends State<DisclaimerScreen> {
           shadowColor: AppColors.primaryBlue.withOpacity(0.5),
         ),
         child: Text(
-          'Continue into HydraFlow',
-          style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 18),
+          AppStrings.get('continue_hf', ref),
+          style: GoogleFonts.outfit(fontWeight: FontWeight.w900, fontSize: 18),
         ),
       ),
     ).animate().fadeIn(delay: 800.ms);
   }
 }
-
-

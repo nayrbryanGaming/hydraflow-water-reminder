@@ -4,11 +4,11 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../core/router/app_router.dart';
-import '../../../core/utils/hydration_calculator.dart';
 import '../../../services/auth_service.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../onboarding/providers/quiz_provider.dart';
 import '../../../widgets/glass_card.dart';
+import '../../../core/localization/app_strings.dart';
 
 class RegisterScreen extends ConsumerStatefulWidget {
   const RegisterScreen({super.key});
@@ -20,16 +20,21 @@ class RegisterScreen extends ConsumerStatefulWidget {
 class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
   bool _isLoading = false;
   bool _agreedToTerms = false;
 
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _emailController.dispose();
+    super.dispose();
+  }
+
   Future<void> _register() async {
-    if (_nameController.text.isEmpty || _emailController.text.isEmpty || 
-        _passwordController.text.isEmpty) {
+    if (_nameController.text.isEmpty || _emailController.text.isEmpty) {
        ScaffoldMessenger.of(context).showSnackBar(
          SnackBar(
-           content: Text('Please complete your profile', style: GoogleFonts.outfit()),
+           content: Text(AppStrings.get('enter_name', ref), style: GoogleFonts.outfit(fontWeight: FontWeight.w600)),
            backgroundColor: AppColors.error,
          ),
        );
@@ -39,7 +44,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     if (!_agreedToTerms) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Please agree to the Terms & Privacy Policy', style: GoogleFonts.outfit()),
+          content: Text(AppStrings.get('agreement_quiz', ref), style: GoogleFonts.outfit(fontWeight: FontWeight.w600)),
           backgroundColor: AppColors.error,
         ),
       );
@@ -50,9 +55,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     setState(() => _isLoading = true);
     
     try {
-      await ref.read(authServiceProvider).registerWithEmailAndPassword(
+      await ref.read(authServiceProvider).registerLocally(
         email: _emailController.text.trim(),
-        password: _passwordController.text,
         displayName: _nameController.text.trim(),
         weightKg: quizData.weightKg,
         dailyGoalMl: quizData.calculatedGoal,
@@ -66,7 +70,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(e.toString(), style: GoogleFonts.outfit()),
+            content: Text(e.toString(), style: GoogleFonts.outfit(fontWeight: FontWeight.w600)),
             backgroundColor: AppColors.error,
           ),
         );
@@ -107,10 +111,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     _buildForm(),
                     const SizedBox(height: 8),
                     _buildTermsCheckbox(),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 40),
                     _buildSubmitButton(),
-                    const SizedBox(height: 24),
-                    _buildLoginLink(),
                   ],
                 ),
               ),
@@ -136,24 +138,27 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   }
 
   Widget _buildHeader() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Join HydraFlow',
+          AppStrings.get('almost_there', ref),
           style: GoogleFonts.outfit(
-            fontSize: 32,
-            fontWeight: FontWeight.w800,
-            letterSpacing: -1,
+            fontSize: 36,
+            fontWeight: FontWeight.w900,
+            letterSpacing: -1.5,
+            color: isDark ? AppColors.textWhite : AppColors.textPrimary,
           ),
         ).animate().fadeIn().slideX(begin: -0.1),
-        const SizedBox(height: 8),
+        const SizedBox(height: 12),
         Text(
-          'Create an account to sync your hydration progress across all your devices.',
+          AppStrings.get('complete_profile_desc', ref),
           style: GoogleFonts.outfit(
             fontSize: 16,
-            color: AppColors.textSecondary,
+            color: isDark ? AppColors.textWhiteSecondary : AppColors.textSecondary,
             height: 1.5,
+            fontWeight: FontWeight.w600,
           ),
         ).animate().fadeIn(delay: 200.ms),
       ],
@@ -167,22 +172,15 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
         children: [
           _buildTextField(
             controller: _nameController,
-            label: 'Full Name',
+            label: AppStrings.get('display_name', ref),
             icon: Icons.person_outline_rounded,
           ),
           const SizedBox(height: 20),
           _buildTextField(
             controller: _emailController,
-            label: 'Email Address',
+            label: 'Email (Local Only)',
             icon: Icons.email_outlined,
             keyboardType: TextInputType.emailAddress,
-          ),
-          const SizedBox(height: 20),
-          _buildTextField(
-            controller: _passwordController,
-            label: 'Password',
-            icon: Icons.lock_outline_rounded,
-            obscureText: true,
           ),
         ],
       ),
@@ -190,6 +188,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   }
 
   Widget _buildTermsCheckbox() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
@@ -201,25 +200,26 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
           ),
           Expanded(
-            child: Wrap(
-              children: [
-                Text('I agree into ', style: GoogleFonts.outfit(fontSize: 13, color: AppColors.textSecondary)),
-                GestureDetector(
-                  onTap: () => context.push(routeLegal, extra: {
-                    'fileName': 'terms_of_service.md',
-                    'title': 'Terms of Service',
-                  }),
-                  child: Text('Terms of Service', style: GoogleFonts.outfit(fontSize: 13, color: AppColors.primaryBlue, fontWeight: FontWeight.bold)),
+            child: RichText(
+              text: TextSpan(
+                style: GoogleFonts.outfit(
+                  fontSize: 13, 
+                  fontWeight: FontWeight.w600,
+                  color: isDark ? AppColors.textWhiteSecondary : AppColors.textSecondary,
                 ),
-                Text(' & ', style: GoogleFonts.outfit(fontSize: 13, color: AppColors.textSecondary)),
-                GestureDetector(
-                  onTap: () => context.push(routeLegal, extra: {
-                    'fileName': 'privacy_policy.md',
-                    'title': 'Privacy Policy',
-                  }),
-                  child: Text('Privacy Policy', style: GoogleFonts.outfit(fontSize: 13, color: AppColors.primaryBlue, fontWeight: FontWeight.bold)),
-                ),
-              ],
+                children: [
+                  TextSpan(text: AppStrings.get('agree_terms_start', ref)),
+                  TextSpan(
+                    text: AppStrings.get('agree_terms_mid', ref),
+                    style: const TextStyle(color: AppColors.primaryBlue, fontWeight: FontWeight.w900),
+                  ),
+                  const TextSpan(text: ' & '),
+                  TextSpan(
+                    text: AppStrings.get('agree_terms_end', ref),
+                    style: const TextStyle(color: AppColors.primaryBlue, fontWeight: FontWeight.w900),
+                  ),
+                ],
+              ),
             ),
           ),
         ],
@@ -234,24 +234,31 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     bool obscureText = false,
     TextInputType? keyboardType,
   }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return TextField(
       controller: controller,
       obscureText: obscureText,
       keyboardType: keyboardType,
-      style: GoogleFonts.outfit(),
+      style: GoogleFonts.outfit(
+        color: isDark ? AppColors.textWhite : AppColors.textPrimary,
+        fontWeight: FontWeight.w600,
+      ),
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: GoogleFonts.outfit(color: AppColors.textSecondary),
+        labelStyle: GoogleFonts.outfit(
+          color: isDark ? AppColors.textWhiteSecondary : AppColors.textSecondary,
+          fontWeight: FontWeight.w600,
+        ),
         prefixIcon: Icon(icon, color: AppColors.primaryBlue, size: 20),
         filled: true,
-        fillColor: Colors.white.withOpacity(0.05),
+        fillColor: isDark ? Colors.white.withOpacity(0.05) : Colors.black.withOpacity(0.02),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
           borderSide: BorderSide.none,
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: const BorderSide(color: AppColors.primaryBlue, width: 1),
+          borderSide: const BorderSide(color: AppColors.primaryBlue, width: 2),
         ),
       ),
     );
@@ -260,13 +267,13 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   Widget _buildSubmitButton() {
     return SizedBox(
       width: double.infinity,
-      height: 60,
+      height: 64,
       child: ElevatedButton(
         onPressed: _isLoading ? null : _register,
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.primaryBlue,
           foregroundColor: Colors.white,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
           elevation: 8,
           shadowColor: AppColors.primaryBlue.withOpacity(0.4),
         ),
@@ -277,35 +284,10 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                 child: CircularProgressIndicator(color: Colors.white, strokeWidth: 3),
               )
             : Text(
-                'Create My Account',
-                style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 18),
+                AppStrings.get('finalize_setup', ref).toUpperCase(),
+                style: GoogleFonts.outfit(fontWeight: FontWeight.w900, fontSize: 18, letterSpacing: 1),
               ),
       ),
-    ).animate().fadeIn(delay: 600.ms);
-  }
-
-  Widget _buildLoginLink() {
-    return Center(
-      child: TextButton(
-        onPressed: () => context.go(routeLogin),
-        child: RichText(
-          text: TextSpan(
-            style: GoogleFonts.outfit(color: AppColors.textSecondary),
-            children: [
-              const TextSpan(text: 'Already have an account? '),
-              TextSpan(
-                text: 'Log In',
-                style: GoogleFonts.outfit(
-                  color: AppColors.primaryBlue,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    ).animate().fadeIn(delay: 800.ms);
+    ).animate().fadeIn(delay: 600.ms).scale(curve: Curves.easeOutBack);
   }
 }
-
-

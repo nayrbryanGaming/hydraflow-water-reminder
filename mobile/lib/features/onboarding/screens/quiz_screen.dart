@@ -8,6 +8,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/hydration_calculator.dart';
 import '../../../widgets/glass_card.dart';
 import '../providers/quiz_provider.dart';
+import '../../../core/localization/app_strings.dart';
 
 class QuizScreen extends ConsumerStatefulWidget {
   const QuizScreen({super.key});
@@ -105,20 +106,24 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
             ),
           const Spacer(),
           Text(
-            'Step ${_currentStep + 1} of $_totalSteps',
+            AppStrings.get('step_of', ref)
+                .replaceAll('%s', '${_currentStep + 1}')
+                .replaceFirst('${_currentStep + 1}', '${_currentStep + 1}', 8) // Fix for second %s
+                .replaceAll('%s', '$_totalSteps'),
             style: GoogleFonts.outfit(
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w900,
               color: AppColors.primaryBlue,
             ),
           ),
           const Spacer(),
-          const SizedBox(width: 48), // Balancing back button
+          const SizedBox(width: 48),
         ],
       ),
     );
   }
 
   Widget _buildStep0Disclaimer() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Padding(
       padding: const EdgeInsets.all(32),
       child: Column(
@@ -134,14 +139,14 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
           ).animate().scale(duration: 600.ms, curve: Curves.easeOutBack),
           const SizedBox(height: 32),
           Text(
-            'Medical Transparency',
-            style: GoogleFonts.outfit(fontSize: 28, fontWeight: FontWeight.w800),
+            AppStrings.get('medical_transparency', ref),
+            style: GoogleFonts.outfit(fontSize: 28, fontWeight: FontWeight.w900, color: isDark ? AppColors.textWhite : AppColors.textPrimary),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 16),
           Text(
-            'HydraFlow is a wellness tool. The calculated targets are based on general population data and should not replace professional medical advice.',
-            style: GoogleFonts.outfit(color: AppColors.textSecondary, height: 1.5),
+            AppStrings.get('medical_desc_quiz', ref),
+            style: GoogleFonts.outfit(color: isDark ? AppColors.textWhiteSecondary : AppColors.textSecondary, height: 1.5, fontWeight: FontWeight.w600),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 32),
@@ -158,8 +163,8 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
-                    'By continuing, you agree to our Terms and emphasize that you have no restrictive medical conditions.',
-                    style: GoogleFonts.outfit(fontSize: 12, color: AppColors.textSecondary),
+                    AppStrings.get('agreement_quiz', ref),
+                    style: GoogleFonts.outfit(fontSize: 12, color: isDark ? AppColors.textWhiteSecondary : AppColors.textSecondary, fontWeight: FontWeight.w600),
                   ),
                 ),
               ],
@@ -206,25 +211,26 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
 
   Widget _buildStep1Biometrics() {
     final state = ref.watch(quizProvider);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Padding(
       padding: const EdgeInsets.all(32),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            'Tell us about yourself',
-            style: GoogleFonts.outfit(fontSize: 28, fontWeight: FontWeight.w800),
+            AppStrings.get('biometrics_title', ref),
+            style: GoogleFonts.outfit(fontSize: 28, fontWeight: FontWeight.w900, color: isDark ? AppColors.textWhite : AppColors.textPrimary),
             textAlign: TextAlign.center,
           ).animate().fadeIn().slideY(begin: 0.1),
           const SizedBox(height: 12),
           Text(
-            'Your biological profile helps us establish a baseline.',
-            style: GoogleFonts.outfit(color: AppColors.textSecondary),
+            AppStrings.get('biometrics_desc', ref),
+            style: GoogleFonts.outfit(color: isDark ? AppColors.textWhiteSecondary : AppColors.textSecondary, fontWeight: FontWeight.w600),
             textAlign: TextAlign.center,
           ).animate().fadeIn(delay: 100.ms),
           const SizedBox(height: 48),
           _buildSlider(
-            label: 'Weight',
+            label: AppStrings.get('weight', ref),
             value: state.weightKg,
             min: 30,
             max: 150,
@@ -233,7 +239,7 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
           ),
           const SizedBox(height: 32),
           _buildSlider(
-            label: 'Age',
+            label: AppStrings.get('age', ref),
             value: state.age.toDouble(),
             min: 10,
             max: 90,
@@ -247,33 +253,34 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
 
   Widget _buildStep2Activity() {
     final state = ref.watch(quizProvider);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Padding(
       padding: const EdgeInsets.all(32),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            'Daily Activity Level',
-            style: GoogleFonts.outfit(fontSize: 28, fontWeight: FontWeight.w800),
+            AppStrings.get('activity_level_quiz', ref),
+            style: GoogleFonts.outfit(fontSize: 28, fontWeight: FontWeight.w900, color: isDark ? AppColors.textWhite : AppColors.textPrimary),
           ),
           const SizedBox(height: 32),
           _buildOptionCard(
-            title: 'Sedentary',
-            subtitle: 'Minimal movement, office work',
+            title: AppStrings.get('sedentary', ref),
+            subtitle: AppStrings.get('sedentary_desc', ref),
             icon: Icons.chair_outlined,
             selected: state.activityLevel == ActivityLevel.sedentary,
             onTap: () => ref.read(quizProvider.notifier).setActivity(ActivityLevel.sedentary),
           ),
           _buildOptionCard(
-            title: 'Moderate',
-            subtitle: 'Regular walking/light exercise',
+            title: AppStrings.get('moderate', ref),
+            subtitle: AppStrings.get('moderate_desc', ref),
             icon: Icons.directions_walk_rounded,
             selected: state.activityLevel == ActivityLevel.moderate,
             onTap: () => ref.read(quizProvider.notifier).setActivity(ActivityLevel.moderate),
           ),
           _buildOptionCard(
-            title: 'Active',
-            subtitle: 'Intense exercise or physical labor',
+            title: AppStrings.get('active_lvl', ref),
+            subtitle: AppStrings.get('active_desc', ref),
             icon: Icons.fitness_center_rounded,
             selected: state.activityLevel == ActivityLevel.active,
             onTap: () => ref.read(quizProvider.notifier).setActivity(ActivityLevel.active),
@@ -285,21 +292,22 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
 
   Widget _buildStep3Climate() {
     final state = ref.watch(quizProvider);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Padding(
       padding: const EdgeInsets.all(32),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            'Your Environment',
-            style: GoogleFonts.outfit(fontSize: 28, fontWeight: FontWeight.w800),
+            AppStrings.get('environment_title', ref),
+            style: GoogleFonts.outfit(fontSize: 28, fontWeight: FontWeight.w900, color: isDark ? AppColors.textWhite : AppColors.textPrimary),
           ),
           const SizedBox(height: 48),
           Row(
             children: [
               Expanded(
                 child: _buildChoiceCard(
-                  title: 'Moderate',
+                  title: AppStrings.get('moderate_climate', ref),
                   icon: Icons.cloud_outlined,
                   selected: !state.isHotClimate,
                   onTap: () => ref.read(quizProvider.notifier).setClimate(false),
@@ -308,7 +316,7 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
               const SizedBox(width: 16),
               Expanded(
                 child: _buildChoiceCard(
-                  title: 'Hot / Humid',
+                  title: AppStrings.get('hot_humid_climate_quiz', ref),
                   icon: Icons.wb_sunny_outlined,
                   selected: state.isHotClimate,
                   onTap: () => ref.read(quizProvider.notifier).setClimate(true),
@@ -318,8 +326,8 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
           ),
           const SizedBox(height: 32),
           Text(
-            'We adjust your target based on fluid loss through perspiration.',
-            style: GoogleFonts.outfit(color: AppColors.textSecondary, fontSize: 13),
+            AppStrings.get('climate_desc', ref),
+            style: GoogleFonts.outfit(color: isDark ? AppColors.textWhiteSecondary : AppColors.textSecondary, fontSize: 13, fontWeight: FontWeight.w600),
             textAlign: TextAlign.center,
           ),
         ],
@@ -329,14 +337,15 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
 
   Widget _buildStep4Objective() {
     final state = ref.watch(quizProvider);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Padding(
       padding: const EdgeInsets.all(32),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(
-            'Your Goal',
-            style: GoogleFonts.outfit(fontSize: 28, fontWeight: FontWeight.w800),
+            AppStrings.get('objective_title', ref),
+            style: GoogleFonts.outfit(fontSize: 28, fontWeight: FontWeight.w900, color: isDark ? AppColors.textWhite : AppColors.textPrimary),
           ),
           const SizedBox(height: 32),
           Wrap(
@@ -345,25 +354,25 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
             children: [
               _buildObjectiveChip(
                 HydrationObjective.cognitive,
-                'Cognitive Focus',
+                AppStrings.get('cognitive_focus', ref),
                 Icons.psychology_outlined,
                 state.objective == HydrationObjective.cognitive,
               ),
               _buildObjectiveChip(
                 HydrationObjective.energy,
-                'Energy Levels',
+                AppStrings.get('energy_levels', ref),
                 Icons.bolt_rounded,
                 state.objective == HydrationObjective.energy,
               ),
               _buildObjectiveChip(
                 HydrationObjective.skin,
-                'Skin Health',
+                AppStrings.get('skin_health', ref),
                 Icons.face_retouching_natural_outlined,
                 state.objective == HydrationObjective.skin,
               ),
               _buildObjectiveChip(
                 HydrationObjective.general,
-                'General Health',
+                AppStrings.get('general_health', ref),
                 Icons.favorite_outline_rounded,
                 state.objective == HydrationObjective.general,
               ),
@@ -383,8 +392,8 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
         child: ElevatedButton(
           onPressed: _nextStep,
           child: Text(
-            _currentStep == _totalSteps - 1 ? 'Calculate My Plan' : 'Continue',
-            style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 18),
+            _currentStep == _totalSteps - 1 ? AppStrings.get('calculate_plan', ref) : AppStrings.get('continue', ref),
+            style: GoogleFonts.outfit(fontWeight: FontWeight.w900, fontSize: 18),
           ),
         ),
       ),
@@ -399,16 +408,17 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
     required String unit,
     required ValueChanged<double> onChanged,
   }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Column(
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(label, style: GoogleFonts.outfit(fontWeight: FontWeight.w600)),
+            Text(label, style: GoogleFonts.outfit(fontWeight: FontWeight.w800, color: isDark ? AppColors.textWhite : AppColors.textPrimary)),
             Text(
               '${value.round()}$unit',
               style: GoogleFonts.outfit(
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.w900,
                 color: AppColors.primaryBlue,
                 fontSize: 20,
               ),
@@ -433,6 +443,7 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
     required bool selected,
     required VoidCallback onTap,
   }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: GestureDetector(
@@ -445,14 +456,14 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
           ),
           child: Row(
             children: [
-              Icon(icon, color: selected ? AppColors.primaryBlue : AppColors.textSecondary),
+              Icon(icon, color: selected ? AppColors.primaryBlue : (isDark ? Colors.white38 : AppColors.textSecondary)),
               const SizedBox(width: 16),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(title, style: GoogleFonts.outfit(fontWeight: FontWeight.bold)),
-                    Text(subtitle, style: GoogleFonts.outfit(fontSize: 12, color: AppColors.textSecondary)),
+                    Text(title, style: GoogleFonts.outfit(fontWeight: FontWeight.w900, color: isDark ? AppColors.textWhite : AppColors.textPrimary)),
+                    Text(subtitle, style: GoogleFonts.outfit(fontSize: 12, color: isDark ? AppColors.textWhiteSecondary : AppColors.textSecondary, fontWeight: FontWeight.w600)),
                   ],
                 ),
               ),
@@ -470,6 +481,7 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
     required bool selected,
     required VoidCallback onTap,
   }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return GestureDetector(
       onTap: onTap,
       child: GlassCard(
@@ -479,9 +491,9 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
         ),
         child: Column(
           children: [
-            Icon(icon, size: 48, color: selected ? AppColors.primaryBlue : AppColors.textSecondary),
+            Icon(icon, size: 48, color: selected ? AppColors.primaryBlue : (isDark ? Colors.white38 : AppColors.textSecondary)),
             const SizedBox(height: 12),
-            Text(title, style: GoogleFonts.outfit(fontWeight: FontWeight.bold)),
+            Text(title, style: GoogleFonts.outfit(fontWeight: FontWeight.w900, color: isDark ? AppColors.textWhite : AppColors.textPrimary)),
           ],
         ),
       ),
@@ -502,13 +514,13 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, color: selected ? Colors.white : AppColors.textSecondary, size: 18),
+            Icon(icon, color: selected ? Colors.white : AppColors.textHint, size: 18),
             const SizedBox(width: 8),
             Text(
               label,
               style: GoogleFonts.outfit(
-                color: selected ? Colors.white : AppColors.textSecondary,
-                fontWeight: FontWeight.w600,
+                color: selected ? Colors.white : AppColors.textHint,
+                fontWeight: FontWeight.w900,
               ),
             ),
           ],
@@ -518,23 +530,23 @@ class _QuizScreenState extends ConsumerState<QuizScreen> {
   }
 }
 
-class _CalculatingOverlay extends StatefulWidget {
+class _CalculatingOverlay extends ConsumerStatefulWidget {
   final VoidCallback onComplete;
   const _CalculatingOverlay({required this.onComplete});
 
   @override
-  State<_CalculatingOverlay> createState() => _CalculatingOverlayState();
+  ConsumerState<_CalculatingOverlay> createState() => _CalculatingOverlayState();
 }
 
-class _CalculatingOverlayState extends State<_CalculatingOverlay> {
+class _CalculatingOverlayState extends ConsumerState<_CalculatingOverlay> {
   double _progress = 0;
-  String _currentStepText = 'Analyzing Biometrics...';
-  final List<String> _steps = [
-    'Analyzing Biometrics...',
-    'Calibrating Environment...',
-    'Mapping Activity Levels...',
-    'Optimizing Fluid Targets...',
-    'Finalizing HydraFlow Plan...',
+  String _currentStepKey = 'analyzing_biometrics';
+  final List<String> _stepKeys = [
+    'analyzing_biometrics',
+    'calibrating_env',
+    'mapping_activity',
+    'optimizing_targets',
+    'finalizing_plan',
   ];
 
   @override
@@ -548,9 +560,9 @@ class _CalculatingOverlayState extends State<_CalculatingOverlay> {
       if (!mounted) break;
       setState(() {
         _progress = i / 100;
-        _currentStepText = _steps[(i / 21).floor().clamp(0, 4)];
+        _currentStepKey = _stepKeys[(i / 21).floor().clamp(0, 4)];
       });
-      await Future.delayed(Duration(milliseconds: 40 + (i % 10 * 10))); // Variation in speed for realism
+      await Future.delayed(Duration(milliseconds: 40 + (i % 10 * 10)));
     }
     await Future.delayed(const Duration(milliseconds: 600));
     widget.onComplete();
@@ -562,7 +574,6 @@ class _CalculatingOverlayState extends State<_CalculatingOverlay> {
       backgroundColor: Colors.transparent,
       body: Stack(
         children: [
-          // Background Blur
           Positioned.fill(
             child: Container(color: Colors.black.withOpacity(0.6)).animate().fadeIn(),
           ),
@@ -597,22 +608,23 @@ class _CalculatingOverlayState extends State<_CalculatingOverlay> {
                   ).animate().scale(duration: 600.ms, curve: Curves.easeOutBack),
                   const SizedBox(height: 48),
                   Text(
-                    'HydraFlow Intelligence',
+                    AppStrings.get('hf_intelligence', ref),
                     style: GoogleFonts.outfit(
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w900,
                       fontSize: 22,
                       letterSpacing: -0.5,
+                      color: Colors.white,
                     ),
                   ).animate().fadeIn(delay: 200.ms),
                   const SizedBox(height: 12),
                   AnimatedSwitcher(
                     duration: const Duration(milliseconds: 400),
                     child: Text(
-                      _currentStepText,
-                      key: ValueKey(_currentStepText),
+                      AppStrings.get(_currentStepKey, ref),
+                      key: ValueKey(_currentStepKey),
                       style: GoogleFonts.outfit(
                         color: AppColors.primaryBlue,
-                        fontWeight: FontWeight.w600,
+                        fontWeight: FontWeight.w900,
                         fontSize: 16,
                       ),
                     ),
@@ -648,5 +660,3 @@ class _CalculatingOverlayState extends State<_CalculatingOverlay> {
     );
   }
 }
-
-

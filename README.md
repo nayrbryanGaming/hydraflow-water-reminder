@@ -1,127 +1,56 @@
-# HydraFlow 💧
+# HydraFlow: Smart Hydration Habit Builder
+**Build healthy hydration habits with a clinical-standard, 100% offline-first intelligent reminder system.**
 
-> **Smart hydration habit builder powered by intelligent reminders.**
-
-[![Flutter](https://img.shields.io/badge/Flutter-%2302569B.svg?style=for-the-badge&logo=Flutter&logoColor=white)](https://flutter.dev)
-[![Firebase](https://img.shields.io/badge/firebase-%23039BE5.svg?style=for-the-badge&logo=firebase)](https://firebase.google.com)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg?style=for-the-badge)](LICENSE)
-
-HydraFlow is a premium mobile application designed to transform hydration from a chore into a seamless habit. Built with Flutter and Firebase, it leverages behavioral design to help users stay focused, energized, and healthy.
+[![Live Demo](https://img.shields.io/badge/Live-Demo-2F80ED?style=for-the-badge)](https://hydraflow-water-reminder.vercel.app)
+[![Google Play](https://img.shields.io/badge/Google_Play-Production-6FCF97?style=for-the-badge)](https://play.google.com/store/apps/details?id=com.nayrbryan.hydraflow)
 
 ---
 
-## 🚀 Problem & Solution
+## 1. One-Liner
+HydraFlow is a premium, data-sovereign wellness application that optimizes fluid intake through biometric calibration and deterministic local notification scheduling.
 
-### The Problem
-Modern professionals and students often neglect hydration due to deep work states or busy schedules. This leads to:
-- Reduced cognitive function & focus
-- Fatigue and headaches
-- Long-term metabolic health issues
+## 2. Problem
+Most hydration trackers suffer from:
+- **Privacy Leakage**: Personal biometrics (weight, age) are synced to cloud servers.
+- **Latency**: Reliance on remote databases (like Firebase) leads to sluggish "offline" behavior and sync errors.
+- **Generic Targets**: Arbitrary water goals that ignore environmental and activity factors.
 
-### The Solution
-HydraFlow solves this through:
-- **Intelligent Reminders**: Adaptive intervals that learn from your logging habits.
-- **Biometric Calibration**: Personalized hydration targets based on weight and activity.
-- **Behavioral Feedback**: Gamified streaks and achievements to reinforce the habit loop.
+## 3. Solution
+HydraFlow provides a 100% On-Device solution:
+- **Local Sovereignty**: All data is stored in high-performance NoSQL (Hive) locally on your device.
+- **Scientific Calibration**: Targets are calculated using NAM (National Academies of Medicine) and WHO population standards.
+- **Zero-Latency UX**: Immediate feedback and logging without any network requests.
 
----
+## 4. Why HydraFlow?
+- **100% Offline**: No Firebase, no analytics, no external tracking. Zero data exit.
+- **Premium Aesthetics**: A liquid-physics inspired UI with high-contrast dynamic themes.
+- **Intelligent Nudges**: Adaptive reminder engine that respects your "Quiet Hours" and activity levels.
 
-## ✨ Core Features
+## 5. Architecture
+Built with **Clean Architecture** principles using the Flutter framework:
+- **Core**: Deterministic state management with Riverpod.
+- **Persistence**: Hive (Local NoSQL) for time-series logs and biometric profiles.
+- **Routing**: Typed navigation using GoRouter.
+- **Theming**: Dynamic Material 3 design system with specialized contrast hardening.
 
-- 🌊 **Dynamic Wave UI**: Visual progress tracking with interactive liquid physics.
-- 🎯 **Smart Goal Setting**: Automatic calculation of daily intake targets.
-- 🔔 **Intelligent Notifications**: Non-intrusive, smart reminder engine.
-- 📊 **Advanced Analytics**: Detailed insights into daily, weekly, and monthly hydration trends.
-- 🏆 **Achievement System**: Unlock milestones and build your hydration streak.
-- 🛡️ **Privacy First**: Google Play compliant data handling with full data sovereignty.
+## 6. What's Built
+- **Clinical Assessment**: Scientific onboarding to establish biological baselines.
+- **Interactive Dashboard**: Real-time progress tracking with animated wave physics.
+- **Analytics Hub**: Weekly velocity trends and habit consistency statistics.
+- **Smart Reminders**: Local notification engine with interval tuning and behavior adaptation.
+- **Bilingual Core**: 100% separated English and Indonesian localization.
 
----
+## 7. Team
+- **Chief Architect**: nayrbryanGaming
+- **Production Auditor**: Antigravity (Advanced AI Hardening System)
 
-## 🛠 Tech Stack
-
-| Component | Technology |
-| :--- | :--- |
-| **Mobile** | Flutter (Dart) |
-| **Backend** | Firebase (Auth, Firestore, FCM) |
-| **State Management** | Riverpod |
-| **Local Storage** | Hive |
-| **Analytics** | Firebase Analytics & Crashlytics |
-| **Infrastructure** | Vercel (Landing Page) |
-
----
-
-## 🏗 Architecture
-
-HydraFlow follows a clean, feature-first architecture for maximum scalability and maintainability:
-
-```mermaid
-graph TD
-    A[Flutter UI] --> B[Riverpod Providers]
-    B --> C[Repository Layer]
-    C --> D[Firebase Service]
-    C --> E[Local Hive Storage]
-    D --> F[Cloud Firestore]
-    D --> G[Cloud Messaging]
+## 8. Quick Start
+```bash
+git clone https://github.com/nayrbryanGaming/hydraflow-water-reminder.git
+cd mobile && flutter pub get
+flutter pub run build_runner build --delete-conflicting-outputs
+flutter run --release
 ```
 
 ---
-
-## 📦 Installation & Setup
-
-### Prerequisites
-- Flutter SDK (latest stable)
-- Android Studio / Xcode
-- Firebase Project
-
-### Quick Start
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/nayrbryanGaming/hydraflow-water-reminder.git
-   ```
-2. **Install dependencies**
-   ```bash
-   flutter pub get
-   ```
-3. **Setup Firebase**
-   - Place your `google-services.json` in `android/app/`
-   - Place your `GoogleService-Info.plist` in `ios/Runner/`
-4. **Run the app**
-   ```bash
-   flutter run
-   ```
-
----
-
-## 🗺 Roadmap
-
-- [x] v1.0: Core tracking & reminders
-- [x] v1.1: Advanced analytics & achievements
-- [ ] v1.2: WearOS & Apple Watch integration
-- [ ] v2.0: AI-powered hydration forecasting
-
----
-
-## 💰 Monetization Strategy
-
-**Freemium Model:**
-- **Free**: Basic reminders, manual tracking, 7-day history.
-- **Premium ($2/month)**: Adaptive AI reminders, custom hydration plans, unlimited history, and exclusive UI themes.
-
----
-
-## ⚖️ Legal & Compliance
-
-HydraFlow is fully compliant with Google Play Store policies:
-- [Privacy Policy](legal/privacy_policy.md)
-- [Terms of Service](legal/terms_of_service.md)
-- [Data Usage Policy](legal/data_usage_policy.md)
-
----
-
-## 🤝 Contribution Guide
-
-We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details on our code of conduct and the process for submitting pull requests.
-
----
-
-&copy; 2026 HydraFlow Team. Built with ❤️ for a healthier world.
+*HydraFlow is a wellness habit builder and does not replace professional medical advice.*

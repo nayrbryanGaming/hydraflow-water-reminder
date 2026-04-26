@@ -1,6 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import '../core/constants/firestore_constants.dart';
-
 class UserModel {
   final String userId;
   final String email;
@@ -11,7 +8,6 @@ class UserModel {
   final bool isPremium;
   final DateTime createdAt;
   final DateTime updatedAt;
-  final String? fcmToken;
   final int age;
   final String hydrationObjective;
   final String activityLevel;
@@ -27,51 +23,45 @@ class UserModel {
     this.isPremium = false,
     required this.createdAt,
     required this.updatedAt,
-    this.fcmToken,
     required this.age,
     required this.hydrationObjective,
     required this.activityLevel,
     required this.isHotClimate,
   });
 
-  factory UserModel.fromFirestore(DocumentSnapshot doc) {
-    final data = doc.data() as Map<String, dynamic>;
+  factory UserModel.fromMap(Map<dynamic, dynamic> data) {
     return UserModel(
-      userId: data[FirestoreConstants.userId] as String? ?? doc.id,
-      email: data[FirestoreConstants.email] as String? ?? '',
-      displayName: data[FirestoreConstants.displayName] as String? ?? 'User',
-      photoUrl: data[FirestoreConstants.photoUrl] as String?,
-      weightKg: (data[FirestoreConstants.weightKg] as num?)?.toDouble() ?? 70.0,
-      dailyWaterGoalMl: data[FirestoreConstants.dailyWaterGoalMl] as int? ?? 2000,
-      isPremium: data[FirestoreConstants.isPremium] as bool? ?? false,
-      createdAt: (data[FirestoreConstants.createdAt] as Timestamp?)?.toDate() ??
-          DateTime.now(),
-      updatedAt: (data[FirestoreConstants.updatedAt] as Timestamp?)?.toDate() ??
-          DateTime.now(),
-      fcmToken: data[FirestoreConstants.fcmToken] as String?,
-      age: data[FirestoreConstants.age] as int? ?? 25,
-      hydrationObjective: data[FirestoreConstants.hydrationObjective] as String? ?? 'general',
-      activityLevel: data[FirestoreConstants.activityLevel] as String? ?? 'moderate',
-      isHotClimate: data[FirestoreConstants.climate] as bool? ?? false,
+      userId: data['userId'] as String? ?? 'local_user',
+      email: data['email'] as String? ?? '',
+      displayName: data['displayName'] as String? ?? 'User',
+      photoUrl: data['photoUrl'] as String?,
+      weightKg: (data['weightKg'] as num?)?.toDouble() ?? 70.0,
+      dailyWaterGoalMl: data['dailyWaterGoalMl'] as int? ?? 2000,
+      isPremium: data['isPremium'] as bool? ?? false,
+      createdAt: data['createdAt'] != null ? DateTime.parse(data['createdAt']) : DateTime.now(),
+      updatedAt: data['updatedAt'] != null ? DateTime.parse(data['updatedAt']) : DateTime.now(),
+      age: data['age'] as int? ?? 25,
+      hydrationObjective: data['hydrationObjective'] as String? ?? 'general',
+      activityLevel: data['activityLevel'] as String? ?? 'moderate',
+      isHotClimate: data['climate'] as bool? ?? false,
     );
   }
 
-  Map<String, dynamic> toFirestore() {
+  Map<String, dynamic> toMap() {
     return {
-      FirestoreConstants.userId: userId,
-      FirestoreConstants.email: email,
-      FirestoreConstants.displayName: displayName,
-      FirestoreConstants.photoUrl: photoUrl,
-      FirestoreConstants.weightKg: weightKg,
-      FirestoreConstants.dailyWaterGoalMl: dailyWaterGoalMl,
-      FirestoreConstants.isPremium: isPremium,
-      FirestoreConstants.createdAt: Timestamp.fromDate(createdAt),
-      FirestoreConstants.updatedAt: Timestamp.fromDate(updatedAt),
-      FirestoreConstants.fcmToken: fcmToken,
-      FirestoreConstants.age: age,
-      FirestoreConstants.hydrationObjective: hydrationObjective,
-      FirestoreConstants.activityLevel: activityLevel,
-      FirestoreConstants.climate: isHotClimate,
+      'userId': userId,
+      'email': email,
+      'displayName': displayName,
+      'photoUrl': photoUrl,
+      'weightKg': weightKg,
+      'dailyWaterGoalMl': dailyWaterGoalMl,
+      'isPremium': isPremium,
+      'createdAt': createdAt.toIso8601String(),
+      'updatedAt': updatedAt.toIso8601String(),
+      'age': age,
+      'hydrationObjective': hydrationObjective,
+      'activityLevel': activityLevel,
+      'climate': isHotClimate,
     };
   }
 
@@ -85,10 +75,6 @@ class UserModel {
     bool? isPremium,
     DateTime? createdAt,
     DateTime? updatedAt,
-    String? fcmToken,
-    int? age,
-    String? hydrationObjective,
-    String? activityLevel,
     bool? isHotClimate,
   }) {
     return UserModel(
@@ -101,7 +87,6 @@ class UserModel {
       isPremium: isPremium ?? this.isPremium,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
-      fcmToken: fcmToken ?? this.fcmToken,
       age: age ?? this.age,
       hydrationObjective: hydrationObjective ?? this.hydrationObjective,
       activityLevel: activityLevel ?? this.activityLevel,
@@ -119,5 +104,3 @@ class UserModel {
   @override
   int get hashCode => userId.hashCode;
 }
-
-

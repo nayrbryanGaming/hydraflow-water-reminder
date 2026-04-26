@@ -1,6 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:uuid/uuid.dart';
-import '../core/constants/firestore_constants.dart';
 
 class AchievementModel {
   final String achievementId;
@@ -25,34 +23,29 @@ class AchievementModel {
         milestones = milestones ?? [],
         unlockedAt = unlockedAt ?? DateTime.now();
 
-  factory AchievementModel.fromFirestore(DocumentSnapshot doc) {
-    final data = doc.data() as Map<String, dynamic>;
+  factory AchievementModel.fromMap(Map<dynamic, dynamic> data) {
     return AchievementModel(
-      achievementId: data[FirestoreConstants.achievementId] as String? ?? doc.id,
-      userId: data[FirestoreConstants.userId] as String? ?? '',
-      streakDays: data[FirestoreConstants.streakDays] as int? ?? 0,
-      longestStreak: data[FirestoreConstants.longestStreak] as int? ?? 0,
-      totalGoalsCompleted: data[FirestoreConstants.totalGoalsCompleted] as int? ?? 0,
-      totalWaterMl: data[FirestoreConstants.totalWaterMl] as int? ?? 0,
-      milestones: (data[FirestoreConstants.milestones] as List<dynamic>?)
-              ?.map((e) => e as int)
-              .toList() ??
-          [],
-      unlockedAt: (data[FirestoreConstants.unlockedAt] as Timestamp?)?.toDate() ??
-          DateTime.now(),
+      achievementId: data['achievementId'] as String? ?? const Uuid().v4(),
+      userId: data['userId'] as String? ?? '',
+      streakDays: data['streakDays'] as int? ?? 0,
+      longestStreak: data['longestStreak'] as int? ?? 0,
+      totalGoalsCompleted: data['totalGoalsCompleted'] as int? ?? 0,
+      totalWaterMl: data['totalWaterMl'] as int? ?? 0,
+      milestones: (data['milestones'] as List<dynamic>?)?.map((e) => e as int).toList() ?? [],
+      unlockedAt: data['unlockedAt'] != null ? DateTime.parse(data['unlockedAt']) : DateTime.now(),
     );
   }
 
-  Map<String, dynamic> toFirestore() {
+  Map<String, dynamic> toMap() {
     return {
-      FirestoreConstants.achievementId: achievementId,
-      FirestoreConstants.userId: userId,
-      FirestoreConstants.streakDays: streakDays,
-      FirestoreConstants.longestStreak: longestStreak,
-      FirestoreConstants.totalGoalsCompleted: totalGoalsCompleted,
-      FirestoreConstants.totalWaterMl: totalWaterMl,
-      FirestoreConstants.milestones: milestones,
-      FirestoreConstants.unlockedAt: Timestamp.fromDate(unlockedAt),
+      'achievementId': achievementId,
+      'userId': userId,
+      'streakDays': streakDays,
+      'longestStreak': longestStreak,
+      'totalGoalsCompleted': totalGoalsCompleted,
+      'totalWaterMl': totalWaterMl,
+      'milestones': milestones,
+      'unlockedAt': unlockedAt.toIso8601String(),
     };
   }
 
@@ -78,5 +71,3 @@ class AchievementModel {
     );
   }
 }
-
-

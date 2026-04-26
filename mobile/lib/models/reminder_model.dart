@@ -1,6 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:uuid/uuid.dart';
-import '../core/constants/firestore_constants.dart';
 
 class ReminderModel {
   final String reminderId;
@@ -22,32 +20,27 @@ class ReminderModel {
   })  : reminderId = reminderId ?? const Uuid().v4(),
         days = days ?? [1, 2, 3, 4, 5, 6, 7];
 
-  factory ReminderModel.fromFirestore(DocumentSnapshot doc) {
-    final data = doc.data() as Map<String, dynamic>;
+  factory ReminderModel.fromMap(Map<dynamic, dynamic> data) {
     return ReminderModel(
-      reminderId: data[FirestoreConstants.reminderId] as String? ?? doc.id,
-      userId: data[FirestoreConstants.userId] as String? ?? '',
-      intervalMinutes:
-          data[FirestoreConstants.intervalMinutes] as int? ?? 60,
-      enabled: data[FirestoreConstants.enabled] as bool? ?? true,
-      startHour: data[FirestoreConstants.startHour] as int? ?? 7,
-      endHour: data[FirestoreConstants.endHour] as int? ?? 22,
-      days: (data[FirestoreConstants.days] as List<dynamic>?)
-              ?.map((e) => e as int)
-              .toList() ??
-          [1, 2, 3, 4, 5, 6, 7],
+      reminderId: data['reminderId'] as String? ?? const Uuid().v4(),
+      userId: data['userId'] as String? ?? '',
+      intervalMinutes: data['intervalMinutes'] as int? ?? 60,
+      enabled: data['enabled'] as bool? ?? true,
+      startHour: data['startHour'] as int? ?? 7,
+      endHour: data['endHour'] as int? ?? 22,
+      days: (data['days'] as List<dynamic>?)?.map((e) => e as int).toList() ?? [1, 2, 3, 4, 5, 6, 7],
     );
   }
 
-  Map<String, dynamic> toFirestore() {
+  Map<String, dynamic> toMap() {
     return {
-      FirestoreConstants.reminderId: reminderId,
-      FirestoreConstants.userId: userId,
-      FirestoreConstants.intervalMinutes: intervalMinutes,
-      FirestoreConstants.enabled: enabled,
-      FirestoreConstants.startHour: startHour,
-      FirestoreConstants.endHour: endHour,
-      FirestoreConstants.days: days,
+      'reminderId': reminderId,
+      'userId': userId,
+      'intervalMinutes': intervalMinutes,
+      'enabled': enabled,
+      'startHour': startHour,
+      'endHour': endHour,
+      'days': days,
     };
   }
 
@@ -71,5 +64,3 @@ class ReminderModel {
     );
   }
 }
-
-

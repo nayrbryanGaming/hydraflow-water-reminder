@@ -1,92 +1,54 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:uuid/uuid.dart';
-import '../core/constants/firestore_constants.dart';
-
 enum DrinkType {
-  water,
-  tea,
-  coffee,
-  juice,
-  sports,
-  other;
+  water('Water', '💧'),
+  coffee('Coffee', '☕'),
+  tea('Tea', '🍵'),
+  juice('Juice', '🧃'),
+  soda('Soda', '🥤'),
+  milk('Milk', '🥛');
 
-  String get label {
-    switch (this) {
-      case DrinkType.water:
-        return 'Water';
-      case DrinkType.tea:
-        return 'Tea';
-      case DrinkType.coffee:
-        return 'Coffee';
-      case DrinkType.juice:
-        return 'Juice';
-      case DrinkType.sports:
-        return 'Sports Drink';
-      case DrinkType.other:
-        return 'Other';
-    }
-  }
-
-  String get emoji {
-    switch (this) {
-      case DrinkType.water:
-        return '💧';
-      case DrinkType.tea:
-        return '🍵';
-      case DrinkType.coffee:
-        return '☕';
-      case DrinkType.juice:
-        return '🧃';
-      case DrinkType.sports:
-        return '⚡';
-      case DrinkType.other:
-        return '🥤';
-    }
-  }
+  final String label;
+  final String emoji;
+  const DrinkType(this.label, this.emoji);
 }
 
 class HydrationLog {
-  final String logId;
+  final String? logId;
   final String userId;
   final int amountMl;
   final DateTime timestamp;
-  final String? note;
   final DrinkType drinkType;
+  final String? note;
 
-  HydrationLog({
-    String? logId,
+  const HydrationLog({
+    this.logId,
     required this.userId,
     required this.amountMl,
     required this.timestamp,
-    this.note,
     this.drinkType = DrinkType.water,
-  }) : logId = logId ?? const Uuid().v4();
+    this.note,
+  });
 
-  factory HydrationLog.fromFirestore(DocumentSnapshot doc) {
-    final data = doc.data() as Map<String, dynamic>;
+  factory HydrationLog.fromMap(Map<dynamic, dynamic> data, String id) {
     return HydrationLog(
-      logId: data[FirestoreConstants.logId] as String? ?? doc.id,
-      userId: data[FirestoreConstants.userId] as String? ?? '',
-      amountMl: data[FirestoreConstants.amountMl] as int? ?? 0,
-      timestamp:
-          (data[FirestoreConstants.timestamp] as Timestamp?)?.toDate() ??
-              DateTime.now(),
-      note: data[FirestoreConstants.note] as String?,
+      logId: id,
+      userId: data['userId'] as String? ?? '',
+      amountMl: data['amountMl'] as int? ?? 0,
+      timestamp: data['timestamp'] != null ? DateTime.parse(data['timestamp']) : DateTime.now(),
       drinkType: DrinkType.values.firstWhere(
-        (e) => e.name == (data[FirestoreConstants.drinkType] as String?),
+        (e) => e.name == (data['drinkType'] as String?),
         orElse: () => DrinkType.water,
       ),
+      note: data['note'] as String?,
     );
   }
 
-  Map<String, dynamic> toFirestore() {
+  Map<String, dynamic> toMap() {
     return {
-      FirestoreConstants.logId: logId,
-      FirestoreConstants.userId: userId,
-      FirestoreConstants.amountMl: amountMl,
-      FirestoreConstants.timestamp: Timestamp.fromDate(timestamp),
-      FirestoreConstants.note: note,
-      FirestoreConstants.drinkType: drinkType.name,
+      'userId': userId,
+      'amountMl': amountMl,
+      'timestamp': timestamp.toIso8601String(),
+      'drinkType': drinkType.name,
+      if (note != null) 'note': note,
     };
   }
 
@@ -95,28 +57,16 @@ class HydrationLog {
     String? userId,
     int? amountMl,
     DateTime? timestamp,
-    String? note,
     DrinkType? drinkType,
+    String? note,
   }) {
     return HydrationLog(
       logId: logId ?? this.logId,
       userId: userId ?? this.userId,
       amountMl: amountMl ?? this.amountMl,
       timestamp: timestamp ?? this.timestamp,
-      note: note ?? this.note,
       drinkType: drinkType ?? this.drinkType,
+      note: note ?? this.note,
     );
   }
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is HydrationLog &&
-          runtimeType == other.runtimeType &&
-          logId == other.logId;
-
-  @override
-  int get hashCode => logId.hashCode;
 }
-
-

@@ -6,9 +6,10 @@ import 'package:fl_chart/fl_chart.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/hydration_calculator.dart';
 import '../../../core/providers/settings_providers.dart';
-import '../../../services/firestore_service.dart';
+import '../../../services/local_db_service.dart';
 import '../../../models/hydration_log.dart';
 import '../../../widgets/glass_card.dart';
+import '../../../core/localization/app_strings.dart';
 
 class AnalyticsScreen extends ConsumerWidget {
   const AnalyticsScreen({super.key});
@@ -24,7 +25,7 @@ class AnalyticsScreen extends ConsumerWidget {
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: Text('Analytics', style: GoogleFonts.outfit(fontWeight: FontWeight.bold)),
+        title: Text(AppStrings.get('analytics', ref), style: GoogleFonts.outfit(fontWeight: FontWeight.bold)),
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
@@ -48,13 +49,13 @@ class AnalyticsScreen extends ConsumerWidget {
               children: [
                 const SizedBox(height: 16),
                 Text(
-                  'Your Hydration Story',
-                  style: GoogleFonts.outfit(fontSize: 28, fontWeight: FontWeight.bold),
+                  AppStrings.get('your_hydration_story', ref),
+                  style: GoogleFonts.outfit(fontSize: 28, fontWeight: FontWeight.w900, color: isDark ? AppColors.textWhite : AppColors.textPrimary),
                 ).animate().fadeIn().slideX(begin: -0.1),
                 const SizedBox(height: 4),
                 Text(
-                  'Detailed breakdown of your habits',
-                  style: GoogleFonts.outfit(fontSize: 16, color: AppColors.textSecondary),
+                  AppStrings.get('detailed_breakdown', ref),
+                  style: GoogleFonts.outfit(fontSize: 16, color: isDark ? AppColors.textWhiteSecondary : AppColors.textSecondary, fontWeight: FontWeight.w500),
                 ).animate().fadeIn(delay: 150.ms),
                 const SizedBox(height: 32),
 
@@ -90,10 +91,10 @@ class AnalyticsScreen extends ConsumerWidget {
                                       Column(
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
-                                          Text('Hydration Velocity', style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 18)),
+                                          Text(AppStrings.get('hydration_velocity', ref), style: GoogleFonts.outfit(fontWeight: FontWeight.w900, fontSize: 18, color: isDark ? AppColors.textWhite : AppColors.textPrimary)),
                                           Text(
-                                            'Last 7 calendar days',
-                                            style: GoogleFonts.outfit(fontSize: 12, color: AppColors.textSecondary),
+                                            AppStrings.get('last_7_days', ref),
+                                            style: GoogleFonts.outfit(fontSize: 12, color: isDark ? AppColors.textWhiteSecondary : AppColors.textSecondary, fontWeight: FontWeight.w600),
                                           ),
                                         ],
                                       ),
@@ -115,14 +116,14 @@ class AnalyticsScreen extends ConsumerWidget {
                                               final amount = rod.toY.round();
                                               return BarTooltipItem(
                                                 '${HydrationCalculator.formatMl(amount, isMetric: isMetric)}\n',
-                                                GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.bold),
+                                                GoogleFonts.outfit(color: Colors.white, fontWeight: FontWeight.w900),
                                                 children: [
                                                   TextSpan(
-                                                    text: amount >= dailyGoal ? 'Goal Met' : 'Incomplete',
+                                                    text: amount >= dailyGoal ? AppStrings.get('goal_met', ref) : AppStrings.get('incomplete', ref),
                                                     style: GoogleFonts.outfit(
                                                       color: amount >= dailyGoal ? AppColors.accentMint : Colors.white60,
                                                       fontSize: 10,
-                                                      fontWeight: FontWeight.w500,
+                                                      fontWeight: FontWeight.bold,
                                                     ),
                                                   ),
                                                 ],
@@ -144,8 +145,8 @@ class AnalyticsScreen extends ConsumerWidget {
                                                     days[date.weekday - 1],
                                                     style: GoogleFonts.outfit(
                                                       fontSize: 12, 
-                                                      fontWeight: FontWeight.bold,
-                                                      color: DateTime.now().day == date.day ? AppColors.primaryBlue : AppColors.textSecondary,
+                                                      fontWeight: FontWeight.w900,
+                                                      color: DateTime.now().day == date.day ? AppColors.primaryBlue : (isDark ? AppColors.textWhiteSecondary : AppColors.textSecondary),
                                                     ),
                                                   ),
                                                 );
@@ -174,19 +175,21 @@ class AnalyticsScreen extends ConsumerWidget {
                               children: [
                                 Expanded(
                                   child: _buildStatCard(
-                                    label: 'Weekly Average',
+                                    label: AppStrings.get('weekly_average', ref),
                                     value: HydrationCalculator.formatMl(weeklyAvg, isMetric: isMetric),
                                     icon: Icons.analytics_outlined,
                                     color: AppColors.primaryBlue,
+                                    isDark: isDark,
                                   ),
                                 ),
                                 const SizedBox(width: 16),
                                 Expanded(
                                   child: _buildStatCard(
-                                    label: 'Best Day',
+                                    label: AppStrings.get('best_day', ref),
                                     value: HydrationCalculator.formatMl(bestDay, isMetric: isMetric),
                                     icon: Icons.emoji_events_outlined,
                                     color: Colors.amber,
+                                    isDark: isDark,
                                   ),
                                 ),
                               ],
@@ -199,19 +202,21 @@ class AnalyticsScreen extends ConsumerWidget {
                               children: [
                                 Expanded(
                                   child: _buildStatCard(
-                                    label: 'Goal Hit Rate',
+                                    label: AppStrings.get('goal_hit_rate', ref),
                                     value: '${hitRate.toStringAsFixed(0)}%',
                                     icon: Icons.track_changes_rounded,
                                     color: AppColors.accentMint,
+                                    isDark: isDark,
                                   ),
                                 ),
                                 const SizedBox(width: 16),
                                 Expanded(
                                   child: _buildStatCard(
-                                    label: 'This Month',
+                                    label: AppStrings.get('this_month', ref),
                                     value: HydrationCalculator.formatMl(monthlyTotal, isMetric: isMetric),
                                     icon: Icons.water_drop_outlined,
                                     color: AppColors.secondaryAqua,
+                                    isDark: isDark,
                                   ),
                                 ),
                               ],
@@ -235,7 +240,7 @@ class AnalyticsScreen extends ConsumerWidget {
                       Row(children: [
                         const Icon(Icons.science_outlined, color: AppColors.accentMint, size: 22),
                         const SizedBox(width: 10),
-                        Text('Science & References', style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 16)),
+                        Text(AppStrings.get('science_refs', ref), style: GoogleFonts.outfit(fontWeight: FontWeight.w900, fontSize: 16, color: isDark ? AppColors.textWhite : AppColors.textPrimary)),
                       ]),
                       const SizedBox(height: 12),
                       _buildReference(
@@ -250,7 +255,7 @@ class AnalyticsScreen extends ConsumerWidget {
                       const Divider(height: 20, color: Colors.white10),
                       Text(
                         '⚠️ HydraFlow recommendations are general wellness guidelines. Consult a healthcare professional for personalized medical advice.',
-                        style: GoogleFonts.outfit(fontSize: 11, color: AppColors.textHint, height: 1.4),
+                        style: GoogleFonts.outfit(fontSize: 11, color: isDark ? AppColors.textWhiteSecondary.withOpacity(0.8) : AppColors.textHint, height: 1.4, fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),
@@ -281,6 +286,7 @@ class AnalyticsScreen extends ConsumerWidget {
     required String value,
     required IconData icon,
     required Color color,
+    required bool isDark,
   }) {
     return GlassCard(
       padding: const EdgeInsets.all(16),
@@ -289,9 +295,9 @@ class AnalyticsScreen extends ConsumerWidget {
         children: [
           Icon(icon, color: color, size: 24),
           const SizedBox(height: 12),
-          Text(label, style: GoogleFonts.outfit(fontSize: 12, color: AppColors.textSecondary, fontWeight: FontWeight.w500)),
+          Text(label, style: GoogleFonts.outfit(fontSize: 12, color: isDark ? AppColors.textWhiteSecondary : AppColors.textSecondary, fontWeight: FontWeight.bold)),
           const SizedBox(height: 4),
-          Text(value, style: GoogleFonts.outfit(fontSize: 22, fontWeight: FontWeight.bold, letterSpacing: -0.5)),
+          Text(value, style: GoogleFonts.outfit(fontSize: 22, fontWeight: FontWeight.w900, color: isDark ? AppColors.textWhite : AppColors.textPrimary, letterSpacing: -0.5)),
         ],
       ),
     );

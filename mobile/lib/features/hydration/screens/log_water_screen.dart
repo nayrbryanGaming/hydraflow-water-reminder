@@ -7,11 +7,12 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:lottie/lottie.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../models/hydration_log.dart';
-import '../../../services/firestore_service.dart';
+import '../../../services/local_db_service.dart';
 import '../../../core/providers/settings_providers.dart';
 import '../../../core/utils/hydration_calculator.dart';
 import '../../../services/auth_service.dart';
 import '../../../widgets/glass_card.dart';
+import '../../../core/localization/app_strings.dart';
 
 class LogWaterScreen extends ConsumerStatefulWidget {
   const LogWaterScreen({super.key});
@@ -43,8 +44,8 @@ class _LogWaterScreenState extends ConsumerState<LogWaterScreen> {
     }
 
     try {
-      final firestore = ref.read(firestoreServiceProvider);
-      await firestore.addHydrationLog(
+      final localDb = ref.read(localDbServiceProvider);
+      await localDb.addHydrationLog(
         HydrationLog(
           userId: ref.read(authServiceProvider).currentUser?.uid ?? '',
           amountMl: _amount,
@@ -66,7 +67,7 @@ class _LogWaterScreenState extends ConsumerState<LogWaterScreen> {
       if (mounted) {
         setState(() => _isLoading = false);
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
+          SnackBar(content: Text('${AppStrings.get('error', ref)}: $e'), backgroundColor: Colors.red),
         );
       }
     }
@@ -130,21 +131,25 @@ class _LogWaterScreenState extends ConsumerState<LogWaterScreen> {
                 ],
               ),
               
-              // Lottie Water Splash (High Fidelity Event)
+              // Replaced Lottie.network with procedural water droplet icons (Offline Hardened)
               Animate(
-                effects: [FadeEffect(delay: 400.ms)],
-                child: Lottie.network(
-                  'https://assets2.lottiefiles.com/packages/lf20_5njp9vzv.json',
-                  height: 180,
-                  repeat: false,
-                  errorBuilder: (context, error, stackTrace) => const SizedBox(height: 180),
+                effects: [FadeEffect(delay: 400.ms), ScaleEffect(duration: 800.ms, curve: Curves.easeOutBack)],
+                child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.water_drop_rounded, color: AppColors.primaryBlue, size: 40),
+                    SizedBox(width: 8),
+                    Icon(Icons.water_drop_rounded, color: AppColors.secondaryAqua, size: 60),
+                    SizedBox(width: 8),
+                    Icon(Icons.water_drop_rounded, color: AppColors.primaryBlue, size: 40),
+                  ],
                 ),
               ),
               
               const SizedBox(height: 12),
               
               Text(
-                'Hydration Logged!',
+                AppStrings.get('log_success', ref),
                 style: GoogleFonts.outfit(
                   fontSize: 32, 
                   fontWeight: FontWeight.w900,
@@ -163,7 +168,7 @@ class _LogWaterScreenState extends ConsumerState<LogWaterScreen> {
                   border: Border.all(color: AppColors.primaryBlue.withOpacity(0.2)),
                 ),
                 child: Text(
-                  '+${HydrationCalculator.formatMl(_amount, isMetric: ref.watch(unitPreferenceProvider))} recorded',
+                  '+${HydrationCalculator.formatMl(_amount, isMetric: ref.watch(unitPreferenceProvider))} ${AppStrings.get('recorded', ref)}',
                   style: GoogleFonts.outfit(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
@@ -189,7 +194,7 @@ class _LogWaterScreenState extends ConsumerState<LogWaterScreen> {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-        title: Text('Add Water', style: GoogleFonts.outfit(fontWeight: FontWeight.bold)),
+        title: Text(AppStrings.get('add_water', ref), style: GoogleFonts.outfit(fontWeight: FontWeight.bold)),
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
@@ -260,7 +265,7 @@ class _LogWaterScreenState extends ConsumerState<LogWaterScreen> {
                                 style: GoogleFonts.outfit(
                                   fontSize: 48,
                                   fontWeight: FontWeight.w900,
-                                  color: Colors.white,
+                                  color: Theme.of(context).colorScheme.onSurface,
                                 ),
                               ),
                               Text(
@@ -323,7 +328,7 @@ class _LogWaterScreenState extends ConsumerState<LogWaterScreen> {
                         child: Text(
                           HydrationCalculator.formatMl(preset, isMetric: ref.watch(unitPreferenceProvider)),
                           style: GoogleFonts.outfit(
-                            color: Colors.white,
+                            color: isSelected ? Colors.white : Theme.of(context).colorScheme.onSurface,
                             fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                           ),
                         ),
@@ -362,7 +367,7 @@ class _LogWaterScreenState extends ConsumerState<LogWaterScreen> {
                               style: GoogleFonts.outfit(
                                 fontSize: 12,
                                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                                color: isSelected ? Colors.white : AppColors.textHint,
+                                color: isSelected ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
                               ),
                             ),
                           ],
@@ -391,7 +396,7 @@ class _LogWaterScreenState extends ConsumerState<LogWaterScreen> {
                             child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
                           )
                         : Text(
-                            'SAVE LOG',
+                            AppStrings.get('save_log', ref),
                             style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.bold),
                           ),
                   ),

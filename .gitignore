@@ -10,7 +10,9 @@ mobile/.pub/
 mobile/build/
 mobile/coverage/
 mobile/doc/api/
-mobile/android/.gradle
+mobile/android/**/build/
+mobile/android/.gradle/
+mobile/android/.kotlin/
 mobile/android/captures/
 mobile/android/gradlew
 mobile/android/gradlew.bat

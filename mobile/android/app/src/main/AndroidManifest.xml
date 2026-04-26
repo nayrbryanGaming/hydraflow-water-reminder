@@ -2,7 +2,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     
-    <!-- Required for timely hydration reminders. Classified as core functionality for this wellness app. -->
+    <!-- Required for timely water intake reminders. Classified as core functionality for this hydration tracker. -->
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     
     <uses-permission android:name="android.permission.WAKE_LOCK" />

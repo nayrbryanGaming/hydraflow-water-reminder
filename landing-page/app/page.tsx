@@ -47,7 +47,7 @@ export default function Page() {
             </span>
           </h1>
           <p className="text-xl md:text-2xl text-gray-400 mb-12 max-w-3xl mx-auto leading-relaxed">
-            HydraFlow helps you build a healthy hydration habit with intelligent reminders, personalized AI goals, and simple striking analytics.
+            Experience the future of hydration tracking. **100% Offline-First.** Your biometrics and logs stay on your device, giving you total data sovereignty and zero-latency performance.
           </p>
           <div className="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-6">
             <button className="group bg-white text-dark px-8 py-5 rounded-2xl font-bold flex items-center justify-center hover:bg-gray-100 transition-all hover:scale-105 shadow-[0_0_40px_-10px_rgba(255,255,255,0.3)]">
@@ -61,6 +61,48 @@ export default function Page() {
           </div>
         </section>
 
+        {/* Clinical Integrity Section */}
+        <section id="clinical" className="py-24 bg-primary/5 border-y border-white/5">
+          <div className="container mx-auto px-6">
+            <div className="flex flex-col md:flex-row items-center gap-16">
+              <div className="flex-1">
+                <div className="inline-flex items-center space-x-2 bg-accent/10 border border-accent/20 rounded-full px-4 py-2 mb-6">
+                  <Shield className="text-accent" size={16} />
+                  <span className="text-sm font-bold text-accent uppercase tracking-wider">Clinical Standards</span>
+                </div>
+                <h2 className="text-4xl md:text-5xl font-bold mb-8 leading-tight">
+                  Built on Global 
+                  <br />
+                  <span className="text-accent">Health Guidelines.</span>
+                </h2>
+                <p className="text-xl text-gray-400 mb-8 leading-relaxed">
+                  HydraFlow doesn't guess. Our algorithm is calibrated against the **National Academies of Medicine (NAM)** and **WHO** standards, adjusting for your unique biology without ever sending data to the cloud.
+                </p>
+                <div className="space-y-4">
+                  {[
+                    "Personalized Metabolic Calculations",
+                    "Adaptive Environmental Scaling",
+                    "Zero External Data Exposure",
+                    "Medical-Grade Transparency"
+                  ].map((item, i) => (
+                    <div key={i} className="flex items-center space-x-3">
+                      <div className="w-5 h-5 rounded-full bg-accent/20 flex items-center justify-center">
+                        <div className="w-2 h-2 rounded-full bg-accent" />
+                      </div>
+                      <span className="font-semibold text-gray-200">{item}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="flex-1 relative">
+                <div className="aspect-square bg-gradient-to-br from-primary/30 to-secondary/30 rounded-[4rem] flex items-center justify-center border border-white/10 overflow-hidden group">
+                  <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-20" />
+                  <Droplet size={180} className="text-white drop-shadow-[0_0_50px_rgba(255,255,255,0.4)] group-hover:scale-110 transition-transform duration-700" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
         {/* Features Section */}
         <section id="features" className="py-32 relative">
           <div className="container mx-auto px-6">
@@ -90,6 +132,8 @@ export default function Page() {
             </div>
           </div>
         </section>
+
+
 
         {/* Testimonials Section */}
         <section className="py-32 bg-white/5 relative">

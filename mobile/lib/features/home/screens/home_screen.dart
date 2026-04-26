@@ -9,7 +9,7 @@ import 'package:shimmer/shimmer.dart';
 
 import '../../../core/router/app_router.dart';
 import '../../../core/utils/hydration_calculator.dart';
-import '../../../services/firestore_service.dart';
+import '../../../services/local_db_service.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../models/hydration_log.dart';
 import '../../../services/insight_service.dart';
@@ -19,6 +19,9 @@ import '../../../core/providers/settings_providers.dart';
 import '../../../services/hydration_stats_service.dart';
 
 
+
+import '../../../core/constants/local_db_constants.dart';
+import '../../../core/localization/app_strings.dart';
 
 final calculatedStatsProvider = Provider((ref) {
   final logsAsync = ref.watch(allLogsProvider);
@@ -33,7 +36,9 @@ final calculatedStatsProvider = Provider((ref) {
           if (profile == null) return null;
           final streak = statsService.calculateStreak(logs, profile.dailyWaterGoalMl);
           final efficiency = statsService.calculateEfficiency(logs, profile.dailyWaterGoalMl);
-          final rank = statsService.calculateRank(globalStats?.totalWaterMl ?? 0, streak);
+          final totalMl = globalStats?[LocalDbConstants.totalWaterMl] as int? ?? 0;
+          final rank = statsService.calculateRank(totalMl, streak);
+
           return {
             'streak': streak,
             'efficiency': efficiency,
@@ -77,7 +82,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-        title: Text('HydraFlow', style: GoogleFonts.outfit(fontWeight: FontWeight.bold)),
+        title: Text(
+          AppStrings.get('app_name', ref), 
+          style: GoogleFonts.outfit(
+            fontWeight: FontWeight.w900,
+            color: isDark ? Colors.white : AppColors.textPrimary,
+          )
+        ),
         backgroundColor: Colors.transparent,
         elevation: 0,
         actions: [
@@ -97,9 +108,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              isDark ? const Color(0xFF0F172A) : const Color(0xFFF0F9FF),
-              isDark ? const Color(0xFF1E293B) : const Color(0xFFE0F2FE),
-              isDark ? const Color(0xFF0F172A) : Colors.white,
+              isDark ? AppColors.backgroundDeepSea : const Color(0xFFF0F9FF),
+              isDark ? AppColors.backgroundDark : const Color(0xFFE0F2FE),
+              isDark ? AppColors.backgroundDeepSea : Colors.white,
             ],
             stops: const [0.0, 0.5, 1.0],
           ),
@@ -209,7 +220,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   ).animate().fadeIn(delay: 200.ms).slideY(begin: 0.2),
                   const SizedBox(height: 12),
                   Text(
-                    'Hydration levels are optimal.\nYour body thanks you!',
+                    AppStrings.get('optimal_hydration', ref),
                     textAlign: TextAlign.center,
                     style: GoogleFonts.outfit(
                       fontSize: 16,
@@ -232,7 +243,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                       shadowColor: AppColors.primaryBlue.withOpacity(0.5),
                     ),
                     child: Text(
-                      'CONTINUE',
+                      AppStrings.get('continue', ref),
                       style: GoogleFonts.outfit(fontWeight: FontWeight.bold, letterSpacing: 1),
                     ),
                   ).animate().fadeIn(delay: 600.ms).scale(delay: 600.ms, curve: Curves.easeOutBack),
@@ -250,17 +261,22 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Hello, $name',
+          '${AppStrings.get('hello', ref)}, $name',
           style: GoogleFonts.outfit(
             fontSize: 28, 
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w900,
             letterSpacing: -0.5,
+            color: isDark ? AppColors.textWhite : AppColors.textPrimary,
           ),
         ).animate().fadeIn(duration: 600.ms).slideX(begin: -0.1),
         const SizedBox(height: 4),
         Text(
-          'Time to hydrate your body',
-          style: TextStyle(color: AppColors.textSecondary, fontSize: 16),
+          AppStrings.get('time_to_hydrate', ref),
+          style: GoogleFonts.outfit(
+            color: isDark ? AppColors.textWhiteSecondary : AppColors.textSecondary, 
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+          ),
         ).animate().fadeIn(delay: 200.ms),
       ],
     );
@@ -315,6 +331,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     fontWeight: FontWeight.w900, 
                     letterSpacing: -2,
                     height: 1,
+                    shadows: [
+                      Shadow(
+                        color: Colors.black.withValues(alpha: 0.1),
+                        offset: const Offset(0, 4),
+                        blurRadius: 10,
+                      ),
+                    ],
                   ),
                 ),
               ).animate().scale(duration: 800.ms, curve: Curves.easeOutBack),
@@ -323,8 +346,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 '${HydrationCalculator.formatMl(consumed, isMetric: ref.watch(unitPreferenceProvider))} / ${HydrationCalculator.formatMl(goal, isMetric: ref.watch(unitPreferenceProvider))}',
                 style: GoogleFonts.outfit(
                   fontSize: 14, 
-                  fontWeight: FontWeight.w600, 
-                  color: Colors.white.withOpacity(0.7),
+                  fontWeight: FontWeight.w700, 
+                  color: percent > 0.4 ? Colors.white.withOpacity(0.9) : AppColors.primaryBlue,
                   letterSpacing: 0.5,
                 ),
               ),
@@ -337,9 +360,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   Widget _buildBentoStats(double percent, WidgetRef ref) {
     final stats = ref.watch(calculatedStatsProvider);
-    final streak = stats?['streak'] ?? 0;
-    final rank = stats?['rank'] ?? 'Beginner';
-    final efficiency = (stats?['efficiency'] ?? 0.0).toStringAsFixed(0);
+    final streak = (stats?['streak'] as int?) ?? 0;
+    final rank = (stats?['rank'] as String?) ?? 'Beginner';
+    final efficiency = ((stats?['efficiency'] as double?) ?? 0.0).toStringAsFixed(0);
+
 
     return Column(
       children: [
@@ -350,9 +374,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               child: _buildBentoCard(
                 icon: Icons.local_fire_department_rounded,
                 iconColor: Colors.orange,
-                title: 'Streak',
-                value: '$streak Days',
-                subtitle: streak > 0 ? 'Keep it up!' : 'Start your streak!',
+                title: AppStrings.get('streak', ref),
+                value: '$streak ${AppStrings.get('days', ref)}',
+                subtitle: streak > 0 ? AppStrings.get('keep_it_up', ref) : AppStrings.get('start_streak', ref),
+                ref: ref,
               ),
             ),
             const SizedBox(width: 16),
@@ -360,8 +385,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               child: _buildBentoCard(
                 icon: Icons.workspace_premium_rounded,
                 iconColor: Colors.amber,
-                title: 'Rank',
-                value: rank,
+                title: AppStrings.get('rank', ref),
+                value: AppStrings.get(rank.toLowerCase(), ref),
+                ref: ref,
               ),
             ),
           ],
@@ -373,14 +399,15 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               child: _buildBentoCard(
                 icon: Icons.query_stats_rounded,
                 iconColor: AppColors.secondaryAqua,
-                title: 'Efficiency',
+                title: AppStrings.get('efficiency', ref),
                 value: '$efficiency%',
+                ref: ref,
               ),
             ),
             const SizedBox(width: 16),
             Expanded(
               flex: 2,
-              child: _buildInsightBento(_dailyInsight),
+              child: _buildInsightBento(_dailyInsight, ref),
             ),
           ],
         ),
@@ -394,7 +421,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     required String title,
     required String value,
     String? subtitle,
+    required WidgetRef ref,
   }) {
+    final isDark = Theme.of(ref.context).brightness == Brightness.dark;
     return GlassCard(
       padding: const EdgeInsets.all(20),
       child: Column(
@@ -409,19 +438,20 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             child: Icon(icon, color: iconColor, size: 28),
           ),
           const SizedBox(height: 16),
-          Text(title, style: GoogleFonts.outfit(color: AppColors.textSecondary, fontSize: 13, fontWeight: FontWeight.w500)),
+          Text(title, style: GoogleFonts.outfit(color: isDark ? AppColors.textWhiteSecondary : AppColors.textSecondary, fontSize: 13, fontWeight: FontWeight.bold)),
           const SizedBox(height: 4),
-          Text(value, style: GoogleFonts.outfit(fontSize: 22, fontWeight: FontWeight.bold, letterSpacing: -0.5)),
+          Text(value, style: GoogleFonts.outfit(fontSize: 22, fontWeight: FontWeight.w900, color: isDark ? AppColors.textWhite : AppColors.textPrimary)),
           if (subtitle != null) ...[
             const SizedBox(height: 4),
-            Text(subtitle, style: GoogleFonts.outfit(color: AppColors.textHint, fontSize: 11)),
+            Text(subtitle, style: GoogleFonts.outfit(color: isDark ? AppColors.textWhiteSecondary.withOpacity(0.7) : AppColors.textHint, fontSize: 11)),
           ],
         ],
       ),
     );
   }
 
-  Widget _buildInsightBento(String insight) {
+  Widget _buildInsightBento(String insight, WidgetRef ref) {
+    final isDark = Theme.of(ref.context).brightness == Brightness.dark;
     return GlassCard(
       padding: const EdgeInsets.all(20),
       color: AppColors.primaryBlue.withOpacity(0.05),
@@ -430,11 +460,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         children: [
           const Icon(Icons.auto_awesome_rounded, color: Colors.amber, size: 24),
           const SizedBox(height: 12),
-          Text('Bio-Tip', style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 14)),
+          Text(AppStrings.get('bio_tip', ref), style: GoogleFonts.outfit(fontWeight: FontWeight.w900, fontSize: 14, color: isDark ? AppColors.textWhite : AppColors.textPrimary)),
           const SizedBox(height: 4),
           Text(
             insight,
-            style: GoogleFonts.outfit(fontSize: 12, color: AppColors.textSecondary, height: 1.3),
+            style: GoogleFonts.outfit(fontSize: 12, color: isDark ? AppColors.textWhiteSecondary : AppColors.textSecondary, height: 1.3, fontWeight: FontWeight.w500),
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
           ),
@@ -450,17 +480,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text('Daily History', style: GoogleFonts.outfit(fontSize: 20, fontWeight: FontWeight.bold)),
+            Text(AppStrings.get('daily_history', ref), style: GoogleFonts.outfit(fontSize: 20, fontWeight: FontWeight.w900)),
             TextButton(
               onPressed: () {
                 HapticFeedback.lightImpact();
                 context.go(routeAnalytics);
               }, 
-              child: Text('View All', style: GoogleFonts.outfit(color: AppColors.primaryBlue, fontWeight: FontWeight.w600)),
+              child: Text(AppStrings.get('view_all', ref), style: GoogleFonts.outfit(color: AppColors.primaryBlue, fontWeight: FontWeight.bold)),
             ),
           ],
         ),
-        const SizedBox(height: 12),
         logs.isEmpty
             ? _buildEmptyState()
             : ListView.separated(
@@ -470,6 +499,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 separatorBuilder: (_, __) => const SizedBox(height: 12),
                 itemBuilder: (context, index) {
                   final log = logs[index];
+                  final isDark = Theme.of(context).brightness == Brightness.dark;
                   return GlassCard(
                     padding: const EdgeInsets.all(16),
                     child: Row(
@@ -486,11 +516,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             children: [
                               Text(
                                 '${HydrationCalculator.formatMl(log.amountMl, isMetric: ref.watch(unitPreferenceProvider))} Intake',
-                                style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 16),
+                                style: GoogleFonts.outfit(fontWeight: FontWeight.w900, fontSize: 16, color: isDark ? AppColors.textWhite : AppColors.textPrimary),
                               ),
                               Text(
                                 '${log.timestamp.hour}:${log.timestamp.minute.toString().padLeft(2, '0')}',
-                                style: TextStyle(color: AppColors.textSecondary, fontSize: 12),
+                                style: TextStyle(color: isDark ? AppColors.textWhiteSecondary : AppColors.textSecondary, fontSize: 12, fontWeight: FontWeight.w600),
                               ),
                             ],
                           ),
@@ -506,6 +536,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   Widget _buildClinicalIntegritySection() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return GlassCard(
       padding: const EdgeInsets.all(28),
       color: AppColors.primaryBlue.withOpacity(0.03),
@@ -528,12 +559,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Clinical Authority',
-                    style: GoogleFonts.outfit(fontWeight: FontWeight.w800, fontSize: 18, letterSpacing: -0.5),
+                    AppStrings.get('medical_transparency', ref),
+                    style: GoogleFonts.outfit(fontWeight: FontWeight.w900, fontSize: 18, letterSpacing: -0.5, color: isDark ? AppColors.textWhite : AppColors.textPrimary),
                   ),
                   Text(
-                    'Science-Backed Hydration',
-                    style: GoogleFonts.outfit(fontSize: 12, color: AppColors.accentMint, fontWeight: FontWeight.w600),
+                    AppStrings.get('science_backed', ref),
+                    style: GoogleFonts.outfit(fontSize: 12, color: AppColors.accentMint, fontWeight: FontWeight.w800),
                   ),
                 ],
               ),
@@ -541,12 +572,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ),
           const SizedBox(height: 20),
           Text(
-            'HydraFlow\'s precision calculation engine is strictly aligned with physiological standards established by the National Academies of Medicine (NAM) and the World Health Organization (WHO).',
+            AppStrings.get('medical_desc', ref),
             style: GoogleFonts.outfit(
               fontSize: 14,
-              color: AppColors.textSecondary,
+              color: isDark ? AppColors.textWhiteSecondary : AppColors.textSecondary,
               height: 1.5,
-              fontWeight: FontWeight.w400,
+              fontWeight: FontWeight.w500,
             ),
           ),
           const SizedBox(height: 24),
@@ -563,11 +594,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(
-                    'Important: This wellness tool indicates population-based hydration targets and does not replace medical diagnosis.',
+                    AppStrings.get('important_medical', ref),
                     style: GoogleFonts.outfit(
                       fontSize: 12,
-                      color: AppColors.textHint,
+                      color: isDark ? AppColors.textWhiteSecondary.withOpacity(0.6) : AppColors.textHint,
                       fontStyle: FontStyle.italic,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                 ),
@@ -580,6 +612,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   Widget _buildEmptyState() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return GlassCard(
       padding: const EdgeInsets.all(32),
       child: Column(
@@ -587,20 +620,21 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           const Icon(Icons.opacity_rounded, size: 64, color: AppColors.textHint),
           const SizedBox(height: 16),
           Text(
-            'No logs yet today',
-            style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.textSecondary),
+            AppStrings.get('no_logs_today', ref),
+            style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.w900, color: isDark ? AppColors.textWhiteSecondary : AppColors.textSecondary),
           ),
           const SizedBox(height: 8),
-          const Text('Every drop counts! Start your hydration journey now.', textAlign: TextAlign.center),
+          Text(AppStrings.get('every_drop_counts', ref), textAlign: TextAlign.center, style: GoogleFonts.outfit(fontWeight: FontWeight.bold, color: isDark ? AppColors.textWhiteSecondary.withOpacity(0.5) : AppColors.textSecondary)),
         ],
       ),
     ).animate().fadeIn(delay: 1.seconds);
   }
 
   Widget _buildShimmer(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Shimmer.fromColors(
-      baseColor: Colors.grey[900]!,
-      highlightColor: Colors.grey[800]!,
+      baseColor: isDark ? Colors.grey[900]! : Colors.grey[300]!,
+      highlightColor: isDark ? Colors.grey[800]! : Colors.grey[100]!,
       child: ListView(
         padding: const EdgeInsets.all(24),
         children: [

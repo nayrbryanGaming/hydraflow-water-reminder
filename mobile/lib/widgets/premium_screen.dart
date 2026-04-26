@@ -9,6 +9,8 @@ class PremiumScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
       body: Stack(
         children: [
@@ -71,16 +73,16 @@ class PremiumScreen extends StatelessWidget {
                             fontSize: 40,
                             fontWeight: FontWeight.w900,
                             color: Colors.white,
-                            letterSpacing: -1,
+                            letterSpacing: -1.5,
                           ),
                         ).animate().fadeIn(delay: 200.ms).slideY(begin: 0.2),
                         const SizedBox(height: 12),
                         Text(
-                          'Unlock your hydration potential',
+                          'Master Your Hydration Journey',
                           style: GoogleFonts.outfit(
                             fontSize: 18,
                             color: AppColors.secondaryAqua,
-                            fontWeight: FontWeight.w600,
+                            fontWeight: FontWeight.w800,
                           ),
                         ).animate().fadeIn(delay: 400.ms),
                         const SizedBox(height: 48),
@@ -88,47 +90,49 @@ class PremiumScreen extends StatelessWidget {
                         _buildFeatureRow(
                           icon: Icons.analytics_outlined,
                           title: 'Advanced Analytics',
-                          subtitle: 'View weekly/monthly trends and deep-tier behavioral velocity.',
+                          subtitle: 'Deep-tier behavioral trends and hydration velocity mapping.',
                         ),
                         const SizedBox(height: 24),
                         _buildFeatureRow(
                           icon: Icons.auto_awesome_outlined,
-                          title: 'Smart AI Reminders',
-                          subtitle: 'Adaptive intervals based on weather and your activity level.',
+                          title: 'Smart Adaptive Nudges',
+                          subtitle: 'Intelligent reminder intervals that adapt to your daily rhythm.',
                         ),
                         const SizedBox(height: 24),
                         _buildFeatureRow(
                           icon: Icons.palette_outlined,
-                          title: 'Premium Themes',
-                          subtitle: 'Unlock exclusive glassmorphism and deep sea visual styles.',
+                          title: 'Exclusive Themes',
+                          subtitle: 'Premium visual styles including Cyber Liquid and Deep Sea Glass.',
                         ),
                         const SizedBox(height: 24),
                         _buildFeatureRow(
-                          icon: Icons.cloud_done_outlined,
-                          title: 'Cloud Priority',
-                          subtitle: 'Instant sync across all your devices with priority storage.',
+                          icon: Icons.offline_pin_outlined,
+                          title: 'Offline Sovereignty',
+                          subtitle: 'Enhanced local data encryption and priority offline processing.',
                         ),
 
                         const SizedBox(height: 64),
                         GlassCard(
                           padding: const EdgeInsets.all(32),
-                          color: Colors.amber.withOpacity(0.1),
-                          border: Border.all(color: Colors.amber.withOpacity(0.2), width: 2),
+                          color: Colors.amber.withOpacity(0.15),
+                          border: Border.all(color: Colors.amber.withOpacity(0.3), width: 2),
                           child: Column(
                             children: [
                               Text(
                                 '\$2.99 / month',
                                 style: GoogleFonts.outfit(
-                                  fontSize: 32,
+                                  fontSize: 34,
                                   fontWeight: FontWeight.w900,
                                   color: Colors.white,
+                                  letterSpacing: -1,
                                 ),
                               ),
                               Text(
-                                'Cancel anytime. Billed annually.',
+                                'Cancel anytime. Pro-tier features.',
                                 style: GoogleFonts.outfit(
-                                  color: Colors.white60,
+                                  color: Colors.white70,
                                   fontSize: 14,
+                                  fontWeight: FontWeight.w600,
                                 ),
                               ),
                               const SizedBox(height: 24),
@@ -137,21 +141,22 @@ class PremiumScreen extends StatelessWidget {
                                 height: 64,
                                 child: ElevatedButton(
                                   onPressed: () {
-                                    // Subscription logic
+                                    // Local purchase simulation
                                   },
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: Colors.amber,
                                     foregroundColor: Colors.black,
                                     shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(20),
+                                      borderRadius: BorderRadius.circular(24),
                                     ),
-                                    elevation: 0,
+                                    elevation: 12,
+                                    shadowColor: Colors.amber.withOpacity(0.3),
                                   ),
                                   child: Text(
-                                    'GO PRO NOW',
+                                    'ACTIVATE PRO',
                                     style: GoogleFonts.outfit(
                                       fontSize: 18,
-                                      fontWeight: FontWeight.bold,
+                                      fontWeight: FontWeight.w900,
                                       letterSpacing: 1.5,
                                     ),
                                   ),
@@ -168,7 +173,7 @@ class PremiumScreen extends StatelessWidget {
                             style: GoogleFonts.outfit(
                               color: Colors.white38,
                               fontSize: 13,
-                              fontWeight: FontWeight.bold,
+                              fontWeight: FontWeight.w900,
                               letterSpacing: 1,
                             ),
                           ),
@@ -195,7 +200,7 @@ class PremiumScreen extends StatelessWidget {
           decoration: BoxDecoration(
             color: Colors.white.withOpacity(0.1),
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: Colors.white10),
+            border: Border.all(color: Colors.white10, width: 2),
           ),
           child: Icon(icon, color: Colors.amber, size: 28),
         ),
@@ -208,8 +213,9 @@ class PremiumScreen extends StatelessWidget {
                 title,
                 style: GoogleFonts.outfit(
                   fontSize: 18,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w900,
                   color: Colors.white,
+                  letterSpacing: -0.5,
                 ),
               ),
               const SizedBox(height: 4),
@@ -217,8 +223,9 @@ class PremiumScreen extends StatelessWidget {
                 subtitle,
                 style: GoogleFonts.outfit(
                   fontSize: 14,
-                  color: Colors.white60,
+                  color: Colors.white70,
                   height: 1.4,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
             ],
@@ -228,5 +235,3 @@ class PremiumScreen extends StatelessWidget {
     ).animate().fadeIn(delay: 600.ms).slideX(begin: 0.1);
   }
 }
-
-

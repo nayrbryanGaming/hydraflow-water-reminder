@@ -6,8 +6,9 @@ import 'package:flutter_animate/flutter_animate.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../services/notification_service.dart';
-import '../../../services/firestore_service.dart';
+import '../../../services/local_db_service.dart';
 import '../../../widgets/glass_card.dart';
+import '../../../core/localization/app_strings.dart';
 
 class RemindersScreen extends ConsumerStatefulWidget {
   const RemindersScreen({super.key});
@@ -29,8 +30,8 @@ class _RemindersScreenState extends ConsumerState<RemindersScreen> {
 
     try {
       if (_remindersEnabled) {
-        final profile = await ref.read(firestoreServiceProvider).getUserProfile().first;
-        final logs = await ref.read(firestoreServiceProvider).getDailyLogs(DateTime.now()).first;
+        final profile = await ref.read(localDbServiceProvider).getUserProfile().first;
+        final logs = await ref.read(localDbServiceProvider).getTodaysHydrationLogs().first;
         final consumedMl = logs.fold<int>(0, (sum, item) => sum + item.amountMl);
         final goalMl = profile?.dailyWaterGoalMl ?? 2000;
 
@@ -46,7 +47,7 @@ class _RemindersScreenState extends ConsumerState<RemindersScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Focus intervals synchronized ⚡', style: GoogleFonts.outfit()),
+            content: Text(AppStrings.get('reminders_sync_success', ref), style: GoogleFonts.outfit()),
             backgroundColor: AppColors.primaryBlue,
             behavior: SnackBarBehavior.floating,
           ),
@@ -65,7 +66,7 @@ class _RemindersScreenState extends ConsumerState<RemindersScreen> {
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: Text('Reminders', style: GoogleFonts.outfit(fontWeight: FontWeight.bold)),
+        title: Text(AppStrings.get('reminders', ref), style: GoogleFonts.outfit(fontWeight: FontWeight.bold)),
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
@@ -94,8 +95,8 @@ class _RemindersScreenState extends ConsumerState<RemindersScreen> {
                 GlassCard(
                   padding: const EdgeInsets.all(8),
                   child: SwitchListTile(
-                    title: Text('Smart AI Reminders', style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 18)),
-                    subtitle: Text('Adaptive nudges based on behavior', style: GoogleFonts.outfit(color: AppColors.textSecondary, fontSize: 13)),
+                    title: Text(AppStrings.get('smart_reminders', ref), style: GoogleFonts.outfit(fontWeight: FontWeight.w900, fontSize: 18, color: isDark ? Colors.white : AppColors.textPrimary)),
+                    subtitle: Text(AppStrings.get('adaptive_nudges', ref), style: GoogleFonts.outfit(color: isDark ? AppColors.textWhiteSecondary : AppColors.textSecondary, fontSize: 13, fontWeight: FontWeight.w600)),
                     value: _remindersEnabled,
                     onChanged: (val) {
                       HapticFeedback.lightImpact();
@@ -122,20 +123,20 @@ class _RemindersScreenState extends ConsumerState<RemindersScreen> {
                     children: [
                       const Icon(Icons.tune_rounded, color: AppColors.secondaryAqua, size: 20),
                       const SizedBox(width: 8),
-                      Text('Interval Tuning', style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 16)),
+                      Text(AppStrings.get('interval_tuning', ref), style: GoogleFonts.outfit(fontWeight: FontWeight.w900, fontSize: 16, color: isDark ? Colors.white : AppColors.textPrimary)),
                     ],
                   ).animate().fadeIn(delay: 100.ms),
                   const SizedBox(height: 16),
                   
                   // Interval Grid Options
-                  _buildIntervalGrid().animate().fadeIn(delay: 200.ms),
+                  _buildIntervalGrid(isDark).animate().fadeIn(delay: 200.ms),
                   
                   const SizedBox(height: 32),
                   Row(
                     children: [
                       const Icon(Icons.wb_sunny_outlined, color: Colors.amber, size: 20),
                       const SizedBox(width: 8),
-                      Text('Active Window', style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 16)),
+                      Text(AppStrings.get('active_window', ref), style: GoogleFonts.outfit(fontWeight: FontWeight.w900, fontSize: 16, color: isDark ? Colors.white : AppColors.textPrimary)),
                     ],
                   ).animate().fadeIn(delay: 300.ms),
                   const SizedBox(height: 16),
@@ -143,9 +144,9 @@ class _RemindersScreenState extends ConsumerState<RemindersScreen> {
                   // Time Pickers
                   Row(
                     children: [
-                      Expanded(child: _buildTimePickerCard('Wake', _startTime, true)),
+                      Expanded(child: _buildTimePickerCard(AppStrings.get('wake', ref), _startTime, true)),
                       const SizedBox(width: 16),
-                      Expanded(child: _buildTimePickerCard('Sleep', _endTime, false)),
+                      Expanded(child: _buildTimePickerCard(AppStrings.get('sleep', ref), _endTime, false)),
                     ],
                   ).animate().fadeIn(delay: 400.ms),
 
@@ -166,7 +167,7 @@ class _RemindersScreenState extends ConsumerState<RemindersScreen> {
                       ),
                       child: _isLoading
                           ? const SizedBox(height: 24, width: 24, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 3))
-                          : Text('Synchronize Intervals', style: GoogleFonts.outfit(fontWeight: FontWeight.bold, fontSize: 18)),
+                          : Text(AppStrings.get('sync_intervals', ref), style: GoogleFonts.outfit(fontWeight: FontWeight.w900, fontSize: 18)),
                     ),
                   ).animate().fadeIn(delay: 500.ms),
                 ] else ...[
@@ -176,9 +177,9 @@ class _RemindersScreenState extends ConsumerState<RemindersScreen> {
                       children: [
                         Icon(Icons.bedtime_outlined, size: 64, color: AppColors.textHint.withOpacity(0.3)),
                         const SizedBox(height: 16),
-                        Text('Reminders Paused', style: GoogleFonts.outfit(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.textSecondary)),
+                        Text(AppStrings.get('reminders_paused', ref), style: GoogleFonts.outfit(fontSize: 20, fontWeight: FontWeight.w900, color: isDark ? AppColors.textWhiteSecondary : AppColors.textSecondary)),
                         const SizedBox(height: 8),
-                        Text('You won\'t receive hydration nudges.', style: GoogleFonts.outfit(color: AppColors.textHint)),
+                        Text(AppStrings.get('no_nudges_desc', ref), style: GoogleFonts.outfit(color: isDark ? AppColors.textHint : AppColors.textHint, fontWeight: FontWeight.w600)),
                       ],
                     ),
                   ).animate().fadeIn(delay: 200.ms),
@@ -193,24 +194,33 @@ class _RemindersScreenState extends ConsumerState<RemindersScreen> {
   }
 
   Widget _buildHeader() {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SizedBox(height: 16),
         Text(
-          'Neuro-Nudges',
-          style: GoogleFonts.outfit(fontSize: 28, fontWeight: FontWeight.bold),
+          'Smart Reminders',
+          style: GoogleFonts.outfit(
+            fontSize: 28, 
+            fontWeight: FontWeight.w900, 
+            color: isDark ? Colors.white : AppColors.textPrimary,
+          ),
         ).animate().fadeIn().slideX(begin: -0.1),
         const SizedBox(height: 4),
         Text(
-          'Configure your hydration cadence',
-          style: GoogleFonts.outfit(fontSize: 16, color: AppColors.textSecondary),
+          AppStrings.get('notification_settings', ref),
+          style: GoogleFonts.outfit(
+            fontSize: 16, 
+            color: isDark ? Colors.white70 : AppColors.textSecondary, 
+            fontWeight: FontWeight.w600,
+          ),
         ).animate().fadeIn(delay: 150.ms),
       ],
     );
   }
 
-  Widget _buildIntervalGrid() {
+  Widget _buildIntervalGrid(bool isDark) {
     return Wrap(
       spacing: 12,
       runSpacing: 12,
@@ -226,10 +236,10 @@ class _RemindersScreenState extends ConsumerState<RemindersScreen> {
             width: (MediaQuery.of(context).size.width - 48 - 24) / 3, // 3 columns
             padding: const EdgeInsets.symmetric(vertical: 16),
             decoration: BoxDecoration(
-              color: isSelected ? AppColors.primaryBlue : Colors.white.withOpacity(0.05),
+              color: isSelected ? AppColors.primaryBlue : Colors.white.withValues(alpha: 0.05),
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: isSelected ? AppColors.primaryBlue.withOpacity(0.5) : Colors.white12),
-              boxShadow: isSelected ? [BoxShadow(color: AppColors.primaryBlue.withOpacity(0.3), blurRadius: 12, spreadRadius: -2)] : [],
+              border: Border.all(color: isSelected ? AppColors.primaryBlue.withValues(alpha: 0.5) : Colors.white12),
+              boxShadow: isSelected ? [BoxShadow(color: AppColors.primaryBlue.withValues(alpha: 0.3), blurRadius: 12, spreadRadius: -2)] : [],
             ),
             child: Column(
               children: [
@@ -237,8 +247,8 @@ class _RemindersScreenState extends ConsumerState<RemindersScreen> {
                   '$mins',
                   style: GoogleFonts.outfit(
                     fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: isSelected ? Colors.white : AppColors.textSecondary,
+                    fontWeight: FontWeight.w900,
+                    color: isSelected ? Colors.white : (isDark ? AppColors.textWhiteSecondary : AppColors.textPrimary),
                   ),
                 ),
                 Text(
@@ -258,6 +268,7 @@ class _RemindersScreenState extends ConsumerState<RemindersScreen> {
   }
 
   Widget _buildTimePickerCard(String title, TimeOfDay time, bool isStart) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return GestureDetector(
       onTap: () async {
         final picked = await showTimePicker(
@@ -269,7 +280,7 @@ class _RemindersScreenState extends ConsumerState<RemindersScreen> {
                 colorScheme: ColorScheme.dark(
                   primary: AppColors.primaryBlue,
                   onPrimary: Colors.white,
-                  surface: AppColors.backgroundDark,
+                  surface: AppColors.backgroundCardDark,
                   onSurface: Colors.white,
                 ),
               ),
@@ -289,11 +300,11 @@ class _RemindersScreenState extends ConsumerState<RemindersScreen> {
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
-            Text(title, style: GoogleFonts.outfit(color: AppColors.textSecondary, fontSize: 13, fontWeight: FontWeight.w500)),
+            Text(title, style: GoogleFonts.outfit(color: isDark ? AppColors.textWhiteSecondary : AppColors.textSecondary, fontSize: 13, fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
             Text(
               time.format(context),
-              style: GoogleFonts.outfit(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
+              style: GoogleFonts.outfit(fontSize: 24, fontWeight: FontWeight.w900, color: isDark ? AppColors.textWhite : AppColors.textPrimary),
             ),
           ],
         ),

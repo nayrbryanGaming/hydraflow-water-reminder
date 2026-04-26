@@ -3,11 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/theme/app_colors.dart';
-import '../../../services/firestore_service.dart';
+import '../../../services/local_db_service.dart';
 import '../../../services/auth_service.dart';
 import '../../../models/user_model.dart';
 import '../../../widgets/glass_card.dart';
 import '../../../core/utils/hydration_calculator.dart';
+import '../../../core/localization/app_strings.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
@@ -34,12 +35,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     _weightController = TextEditingController();
     _ageController = TextEditingController();
     
-    // Defer loading initial data
     Future.microtask(_loadUserData);
   }
 
   void _loadUserData() async {
-    final userProfile = await ref.read(firestoreServiceProvider).getUserProfile().first;
+    final userProfile = await ref.read(localDbServiceProvider).getUserProfile().first;
     if (userProfile != null) {
       setState(() {
         _nameController.text = userProfile.displayName;
@@ -92,7 +92,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
     setState(() => _isSaving = true);
     try {
-      final currentProfile = await ref.read(firestoreServiceProvider).getUserProfile().first;
+      final currentProfile = await ref.read(localDbServiceProvider).getUserProfile().first;
       if (currentProfile != null) {
         final updatedUser = currentProfile.copyWith(
           displayName: _nameController.text,
@@ -105,10 +105,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           updatedAt: DateTime.now(),
         );
 
-        await ref.read(firestoreServiceProvider).updateUserProfile(updatedUser);
+        await ref.read(localDbServiceProvider).updateUserProfile(updatedUser);
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Profile updated successfully!'), backgroundColor: Colors.green),
+            SnackBar(content: Text(AppStrings.get('profile_updated', ref)), backgroundColor: Colors.green),
           );
           context.pop();
         }
@@ -116,7 +116,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error saving profile: $e'), backgroundColor: Colors.red),
+          SnackBar(content: Text('${AppStrings.get('error_saving_profile', ref)}: $e'), backgroundColor: Colors.red),
         );
       }
     } finally {
@@ -130,7 +130,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Edit Profile', style: GoogleFonts.outfit(fontWeight: FontWeight.bold)),
+        title: Text(AppStrings.get('edit_profile', ref), style: GoogleFonts.outfit(fontWeight: FontWeight.bold)),
         backgroundColor: Colors.transparent,
       ),
       extendBodyBehindAppBar: true,
@@ -155,16 +155,17 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _buildSectionHeader('Basic Info'),
+                        _buildSectionHeader(AppStrings.get('basic_info', ref)),
                         GlassCard(
                           padding: const EdgeInsets.all(20),
                           child: Column(
                             children: [
                               _buildTextField(
                                 controller: _nameController,
-                                label: 'Display Name',
+                                label: AppStrings.get('display_name', ref),
                                 icon: Icons.person_outline,
-                                validator: (v) => v!.isEmpty ? 'Enter name' : null,
+                                validator: (v) => v!.isEmpty ? AppStrings.get('enter_name', ref) : null,
+                                isDark: isDark,
                               ),
                               const SizedBox(height: 16),
                               Row(
@@ -172,20 +173,22 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                                   Expanded(
                                     child: _buildTextField(
                                       controller: _ageController,
-                                      label: 'Age',
+                                      label: AppStrings.get('age', ref),
                                       icon: Icons.calendar_today_outlined,
                                       keyboardType: TextInputType.number,
                                       onChanged: (_) => _recalculateGoal(),
+                                      isDark: isDark,
                                     ),
                                   ),
                                   const SizedBox(width: 16),
                                   Expanded(
                                     child: _buildTextField(
                                       controller: _weightController,
-                                      label: 'Weight (kg)',
+                                      label: AppStrings.get('weight_kg', ref),
                                       icon: Icons.monitor_weight_outlined,
                                       keyboardType: TextInputType.number,
                                       onChanged: (_) => _recalculateGoal(),
+                                      isDark: isDark,
                                     ),
                                   ),
                                 ],
@@ -195,19 +198,19 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         ),
                         
                         const SizedBox(height: 24),
-                        _buildSectionHeader('Lifestyle & Environment'),
+                        _buildSectionHeader(AppStrings.get('lifestyle_env', ref)),
                         GlassCard(
                           padding: const EdgeInsets.all(20),
                           child: Column(
                             children: [
                               _buildDropdownTile(
-                                label: 'Activity Level',
+                                label: AppStrings.get('activity_level', ref),
                                 icon: Icons.directions_run_outlined,
                                 value: _activityLevel,
-                                items: const [
-                                  DropdownMenuItem(value: 'sedentary', child: Text('Sedentary')),
-                                  DropdownMenuItem(value: 'moderate', child: Text('Moderate')),
-                                  DropdownMenuItem(value: 'active', child: Text('Active')),
+                                items: [
+                                  DropdownMenuItem(value: 'sedentary', child: Text(AppStrings.get('sedentary', ref))),
+                                  DropdownMenuItem(value: 'moderate', child: Text(AppStrings.get('moderate', ref))),
+                                  DropdownMenuItem(value: 'active', child: Text(AppStrings.get('active_lvl', ref))),
                                 ],
                                 onChanged: (v) {
                                   setState(() => _activityLevel = v!);
@@ -216,8 +219,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                               ),
                               const Divider(height: 32),
                               SwitchListTile(
-                                title: Text('Hot / Humid Climate', style: GoogleFonts.outfit(fontSize: 14, fontWeight: FontWeight.w500)),
-                                subtitle: const Text('Increase targets for sweat compensation', style: TextStyle(fontSize: 12)),
+                                title: Text(AppStrings.get('hot_humid_climate', ref), style: GoogleFonts.outfit(fontSize: 14, fontWeight: FontWeight.w900, color: isDark ? AppColors.textWhite : AppColors.textPrimary)),
+                                subtitle: Text(AppStrings.get('hot_humid_desc', ref), style: TextStyle(fontSize: 12, color: isDark ? AppColors.textWhiteSecondary : AppColors.textSecondary, fontWeight: FontWeight.w500)),
                                 secondary: const Icon(Icons.wb_sunny_outlined, color: Colors.orange),
                                 value: _isHotClimate,
                                 activeColor: AppColors.primaryBlue,
@@ -231,7 +234,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         ),
 
                         const SizedBox(height: 24),
-                        _buildSectionHeader('Calculated Daily Goal'),
+                        _buildSectionHeader(AppStrings.get('calculated_daily_goal', ref)),
                         GlassCard(
                           padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
                           color: AppColors.primaryBlue.withOpacity(0.1),
@@ -240,12 +243,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                             children: [
                               Text(
                                 '$_dailyGoal',
-                                style: GoogleFonts.outfit(fontSize: 48, fontWeight: FontWeight.bold, color: AppColors.primaryBlue),
+                                style: GoogleFonts.outfit(fontSize: 48, fontWeight: FontWeight.w900, color: AppColors.primaryBlue),
                               ),
                               const SizedBox(width: 12),
                               Text(
-                                'ml / day',
-                                style: GoogleFonts.outfit(fontSize: 18, color: AppColors.textSecondary),
+                                AppStrings.get('ml_per_day', ref),
+                                style: GoogleFonts.outfit(fontSize: 18, color: isDark ? AppColors.textWhiteSecondary : AppColors.textSecondary, fontWeight: FontWeight.w600),
                               ),
                             ],
                           ),
@@ -264,7 +267,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                             ),
                             child: _isSaving 
                                 ? const CircularProgressIndicator(color: Colors.white)
-                                : Text('Save Profile Changes', style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.bold)),
+                                : Text(AppStrings.get('save_profile_changes', ref), style: GoogleFonts.outfit(fontSize: 18, fontWeight: FontWeight.w900)),
                           ),
                         ),
                         const SizedBox(height: 40),
@@ -278,15 +281,16 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   }
 
   Widget _buildSectionHeader(String title) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Padding(
       padding: const EdgeInsets.only(left: 8, bottom: 12),
       child: Text(
         title.toUpperCase(),
         style: GoogleFonts.outfit(
           fontSize: 12,
-          fontWeight: FontWeight.bold,
-          color: AppColors.textSecondary,
-          letterSpacing: 1.2,
+          fontWeight: FontWeight.w900,
+          color: isDark ? AppColors.textWhiteSecondary : AppColors.textSecondary,
+          letterSpacing: 1.5,
         ),
       ),
     );
@@ -299,18 +303,24 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     TextInputType keyboardType = TextInputType.text,
     String? Function(String?)? validator,
     ValueChanged<String>? onChanged,
+    required bool isDark,
   }) {
     return TextFormField(
       controller: controller,
       keyboardType: keyboardType,
       validator: validator,
       onChanged: onChanged,
-      style: GoogleFonts.outfit(),
+      style: GoogleFonts.outfit(color: isDark ? Colors.white : AppColors.textPrimary, fontWeight: FontWeight.w600),
       decoration: InputDecoration(
         labelText: label,
+        labelStyle: GoogleFonts.outfit(color: isDark ? AppColors.textWhiteSecondary : AppColors.textSecondary, fontWeight: FontWeight.w500),
         prefixIcon: Icon(icon, color: AppColors.primaryBlue, size: 20),
+        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: isDark ? Colors.white24 : Colors.black12)),
+        focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: AppColors.primaryBlue, width: 2)),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        fillColor: Colors.white.withOpacity(0.02),
+        filled: true,
       ),
     );
   }
@@ -322,6 +332,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     required List<DropdownMenuItem<String>> items,
     required ValueChanged<String?> onChanged,
   }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Row(
       children: [
         Icon(icon, color: AppColors.primaryBlue, size: 20),
@@ -330,13 +341,15 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(label, style: const TextStyle(fontSize: 12, color: AppColors.textSecondary)),
+              Text(label, style: TextStyle(fontSize: 12, color: isDark ? AppColors.textWhiteSecondary : AppColors.textSecondary, fontWeight: FontWeight.bold)),
               DropdownButton<String>(
                 value: value,
                 isExpanded: true,
                 underline: const SizedBox(),
                 items: items,
                 onChanged: onChanged,
+                dropdownColor: isDark ? AppColors.backgroundDark : Colors.white,
+                style: GoogleFonts.outfit(color: isDark ? AppColors.textWhite : AppColors.textPrimary, fontWeight: FontWeight.w600),
               ),
             ],
           ),
@@ -345,5 +358,3 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     );
   }
 }
-
-
