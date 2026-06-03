@@ -66,7 +66,7 @@ class AppStrings {
       'onboarding_3_body': 'Our intelligent reminder engine adapts throughout the day — gentle in the morning, active at midday, and motivating in the evening.',
       'onboarding_4_title': 'Privacy First',
       'onboarding_4_sub': 'Your data, your control',
-      'onboarding_4_body': 'We use your weight only to calculate hydration goals — everything is stored 100% offline on your device. Never shared or sold.',
+      'onboarding_4_body': 'We use your weight only to calculate hydration goals — everything is stored Full offline on your device. Never shared or sold.',
       'onboarding_5_title': 'Success Signals',
       'onboarding_5_sub': 'Critical for habit building',
       'onboarding_5_body': 'To keep you on track, HydraFlow sends gentle nudges. We politely request notification access next to ensure you never miss a window.',
@@ -211,6 +211,7 @@ class AppStrings {
       'profile_updated': 'Profile updated successfully!',
       'error_saving_profile': 'Error saving profile',
       'enter_name': 'Enter name',
+      'email_local': 'Email (Local Only)',
       // Settings Extra
       'faq_kb': 'FAQ & Knowledge Base',
       'contact_support': 'Contact Support',
@@ -281,7 +282,7 @@ class AppStrings {
       'onboarding_3_body': 'Mesin pengingat cerdas kami beradaptasi sepanjang hari — lembut di pagi hari, aktif di siang hari, dan memotivasi di malam hari.',
       'onboarding_4_title': 'Privasi Utama',
       'onboarding_4_sub': 'Data Anda, kendali Anda',
-      'onboarding_4_body': 'Kami menggunakan berat badan hanya untuk hitung target — semua disimpan 100% offline di perangkat Anda. Tidak pernah dibagikan atau dijual.',
+      'onboarding_4_body': 'Kami menggunakan berat badan hanya untuk hitung target — semua disimpan Full offline di perangkat Anda. Tidak pernah dibagikan atau dijual.',
       'onboarding_5_title': 'Sinyal Sukses',
       'onboarding_5_sub': 'Kritis untuk bangun kebiasaan',
       'onboarding_5_body': 'Untuk menjaga Anda tetap pada jalur, HydraFlow mengirim pengingat lembut. Kami meminta akses notifikasi untuk memastikan jendela hidrasi tidak terlewat.',
@@ -426,6 +427,7 @@ class AppStrings {
       'profile_updated': 'Profil berhasil diperbarui!',
       'error_saving_profile': 'Gagal menyimpan profil',
       'enter_name': 'Masukkan nama',
+      'email_local': 'Email (Hanya Lokal)',
       // Settings Extra
       'faq_kb': 'FAQ & Basis Pengetahuan',
       'contact_support': 'Hubungi Dukungan',

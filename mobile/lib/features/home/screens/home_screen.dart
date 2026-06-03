@@ -257,6 +257,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   Widget _buildHeader(String name) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -283,6 +284,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   Widget _buildMainLiquidGlass(double percent, int consumed, int goal) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Center(
       child: Stack(
         alignment: Alignment.center,
@@ -474,6 +476,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   }
 
   Widget _buildRecentActivity(List<HydrationLog> logs) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

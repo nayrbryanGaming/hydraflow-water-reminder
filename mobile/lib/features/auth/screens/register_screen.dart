@@ -178,7 +178,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
           const SizedBox(height: 20),
           _buildTextField(
             controller: _emailController,
-            label: 'Email (Local Only)',
+            label: AppStrings.get('email_local', ref),
             icon: Icons.email_outlined,
             keyboardType: TextInputType.emailAddress,
           ),

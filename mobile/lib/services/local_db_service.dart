@@ -134,3 +134,7 @@ final userStatsProvider = StreamProvider<Map<String, dynamic>>((ref) {
   return ref.watch(localDbServiceProvider).getUserStats();
 });
 
+final todaysLogsProvider = StreamProvider<List<HydrationLog>>((ref) {
+  return ref.watch(localDbServiceProvider).getTodaysHydrationLogs();
+});
+

@@ -75,6 +75,9 @@ class UserModel {
     bool? isPremium,
     DateTime? createdAt,
     DateTime? updatedAt,
+    int? age,
+    String? hydrationObjective,
+    String? activityLevel,
     bool? isHotClimate,
   }) {
     return UserModel(
